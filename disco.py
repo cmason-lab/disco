@@ -460,14 +460,14 @@ def main():
     args = parser.parse_args()
 
     print args
-    # disco1 = Disco(args.samp1list.split(","), args.datapath, args.outfile1, args.pkldir)
-    # disco2 = Disco(args.samp2list.split(","), args.datapath, args.outfile2, args.pkldir)t
-    # if args.stattest == "ks-test":
-    #     # run ks test
-    #     pass
-    # elif args.stattest == "t-test":
-    #     # run t test
-    #     pass
+    disco1 = Disco(args.samp1list.split(","), args.datapath, args.outfile1, args.pkldir)
+    disco2 = Disco(args.samp2list.split(","), args.datapath, args.outfile2, args.pkldir)
+    if args.stattest == "ks-test":
+        # run ks test
+        pass
+    elif args.stattest == "t-test":
+        # run t test
+        pass
 
 if __name__ == '__main__':
     main()
