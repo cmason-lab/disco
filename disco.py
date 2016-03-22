@@ -453,7 +453,7 @@ def main():
     parser.add_argument('--minmedianshift', metavar="", dest='minmedianshift', type=float, default=0,
                         help="Do not run statistical test for isoform if shift in median between the two groups is "
                              "less than minmedianshift")
-    parser.add_argument('--stattest', metavar="", dest='stattest', choices=["ks-test", "t-test"], type=str,
+    parser.add_argument('--stattest', metavar="", dest='stattest', choices=["KS", "T"], type=str,
                         default="t-test", help="Which statistical test to run: ks test or t test (default)?")  # options kstest or ttest
 
     # default, choices, help
@@ -462,12 +462,12 @@ def main():
     print args
     disco1 = Disco(args.samp1list.split(","), args.datapath, args.outfile1, args.pkldir)
     disco2 = Disco(args.samp2list.split(","), args.datapath, args.outfile2, args.pkldir)
-    if args.stattest == "ks-test":
-        # run ks test
-        pass
-    elif args.stattest == "t-test":
-        # run t test
-        pass
+    statres = stat_test(disco1, disco2, args.comppref+"_"+args.stattest+"res.txt",
+                        args.maxciw, args.mininfreads, args.mindefreads, args.minavgpsi,
+                        args.minnumcells, args.annotationfile, args.stattest)
+    sigks = getsig(statres, minmedianshift=args.minmedianshift, outfile=args.comppref+"_sig"+args.stattest+"test.txt")
+    plotsig_violin(sigks, statres, disco1, disco2, args.comppref+"_sig"+args.stattest+"test_violinplots.pdf",
+                   args.group1name, args.group2name)
 
 if __name__ == '__main__':
     main()
