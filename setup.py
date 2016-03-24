@@ -1,4 +1,7 @@
-from distutils.core import setup
+#!/usr/bin/env python
+
+# from distutils.core import setup
+from setuptools import setup
 
 setup(
       name='disco',
@@ -6,11 +9,11 @@ setup(
       description='Python tools for analyzing single cell alternative splicing',
       author='Priyanka Vijay',
       author_email='prv2004@med.cornell.edu',
-      url='',
-      packages=[
-                'disco',
-                ],
-      package_dir={'disco': 'lib/disco'},
-      scripts=['scripts/disco'],
+      url='https://pbtech-vc.med.cornell.edu/git/mason-lab/disco.git',
+      packages=['disco'],
+      entry_points={'console_scripts': ['disco = disco.run:main']},
       requires=['numpy', 'pandas', 'scipy', 'matplotlib', 'seaborn']
      )
+#      scripts=['scripts/Disco'],
+#      package_dir={'': 'lib'},
+#scripts=['scripts/Disco'],

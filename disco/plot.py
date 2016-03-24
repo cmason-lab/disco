@@ -8,45 +8,6 @@ sns.set_context("talk", font_scale=1.5)
 sns.set_style("darkgrid")
 
 
-def _renamer(x, sigkeys, kskeys):
-    isfshort = x["isfshortname"]
-    geneisf = x["gene!isoform"]
-    if geneisf in sigkeys:
-        # newlabel = isfshort+"*"
-        newlabel = isfshort.strip("isf-")+"*"
-    elif geneisf in kskeys:
-        # newlabel = isfshort
-        newlabel = isfshort.strip("isf-")+"-"
-    else:
-        # newlabel = isfshort+"/"
-        newlabel = isfshort.strip("isf-")
-    return x.append(pd.Series([newlabel], index=["newlabel"]))
-
-
-# def _renamer(x, sigkeys, kskeys, enstdf):
-#     # isfshort = x["isfshortname"]
-#     geneisf = x["gene!isoform"]
-#     enst = geneisf.split("!")[1].split(".")[0]
-#     if enst in enstdf.index:
-#         transcripttype = enstdf.loc[enst]["Transcript type"]
-#     else:
-#         transcripttype = ""
-#     if geneisf in sigkeys:
-#         # newlabel = isfshort+"*"
-#         # newlabel = isfshort.strip("isf-")+"*"
-#         newlabel = enst+"*"
-#     elif geneisf in kskeys:
-#         # newlabel = isfshort
-#         # newlabel = isfshort.strip("isf-")+"-"
-#         newlabel = enst+"-"
-#     else:
-#         # newlabel = isfshort+"/"
-#         # newlabel = isfshort.strip("isf-")
-#         newlabel = enst
-#     print newlabel+" "+transcripttype
-#     return x.append(pd.Series([newlabel+" "+transcripttype], index=["newlabel"]))
-
-
 def plotsig_violin(sigks, statsres, sciso1, sciso2, outfile, sampname1, sampname2):
     # enstdf = pd.DataFrame.from_csv(enstfile, sep="\t", index_col=1)
     sns.set(style="dark", palette="muted", color_codes=True, font_scale=1.5)
@@ -85,8 +46,19 @@ def plotsig_violin(sigks, statsres, sciso1, sciso2, outfile, sampname1, sampname
     return
 
 
-# def plotsig_hist(sigks, statsres, disco1, disco2, outfile, sampname1, sampname2):
-#     pass
+def _renamer(x, sigkeys, kskeys):
+    isfshort = x["isfshortname"]
+    geneisf = x["gene!isoform"]
+    if geneisf in sigkeys:
+        # newlabel = isfshort+"*"
+        newlabel = isfshort.strip("isf-")+"*"
+    elif geneisf in kskeys:
+        # newlabel = isfshort
+        newlabel = isfshort.strip("isf-")+"-"
+    else:
+        # newlabel = isfshort+"/"
+        newlabel = isfshort.strip("isf-")
+    return x.append(pd.Series([newlabel], index=["newlabel"]))
 
 
 def plotviolin_1samp(disco, genestoplot, outfile):
@@ -123,3 +95,30 @@ def plotviolin_1samp(disco, genestoplot, outfile):
     print "Saved plots to", outfile
     sns.set()
     return
+
+# def plotsig_hist(sigks, statsres, disco1, disco2, outfile, sampname1, sampname2):
+#     pass
+
+
+# def _renamer(x, sigkeys, kskeys, enstdf):
+#     # isfshort = x["isfshortname"]
+#     geneisf = x["gene!isoform"]
+#     enst = geneisf.split("!")[1].split(".")[0]
+#     if enst in enstdf.index:
+#         transcripttype = enstdf.loc[enst]["Transcript type"]
+#     else:
+#         transcripttype = ""
+#     if geneisf in sigkeys:
+#         # newlabel = isfshort+"*"
+#         # newlabel = isfshort.strip("isf-")+"*"
+#         newlabel = enst+"*"
+#     elif geneisf in kskeys:
+#         # newlabel = isfshort
+#         # newlabel = isfshort.strip("isf-")+"-"
+#         newlabel = enst+"-"
+#     else:
+#         # newlabel = isfshort+"/"
+#         # newlabel = isfshort.strip("isf-")
+#         newlabel = enst
+#     print newlabel+" "+transcripttype
+#     return x.append(pd.Series([newlabel+" "+transcripttype], index=["newlabel"]))
