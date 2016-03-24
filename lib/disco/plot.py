@@ -8,7 +8,7 @@ sns.set_context("talk", font_scale=1.5)
 sns.set_style("darkgrid")
 
 
-def _renamer(x, sigkeys, kskeys, enstdf):
+def _renamer(x, sigkeys, kskeys):
     isfshort = x["isfshortname"]
     geneisf = x["gene!isoform"]
     if geneisf in sigkeys:
@@ -47,8 +47,8 @@ def _renamer(x, sigkeys, kskeys, enstdf):
 #     return x.append(pd.Series([newlabel+" "+transcripttype], index=["newlabel"]))
 
 
-def plotsig_violin(sigks, statsres, sciso1, sciso2, outfile, sampname1, sampname2, enstfile):
-    enstdf = pd.DataFrame.from_csv(enstfile, sep="\t", index_col=1)
+def plotsig_violin(sigks, statsres, sciso1, sciso2, outfile, sampname1, sampname2):
+    # enstdf = pd.DataFrame.from_csv(enstfile, sep="\t", index_col=1)
     sns.set(style="dark", palette="muted", color_codes=True, font_scale=1.5)
     plotspdf = pdf.PdfPages(outfile)
     alldatadf1 = sciso1.alldatadf
@@ -62,7 +62,7 @@ def plotsig_violin(sigks, statsres, sciso1, sciso2, outfile, sampname1, sampname
         genedf1 = alldatadf1[alldatadf1["event_name"] == gene]
         genedf2 = alldatadf2[alldatadf2["event_name"] == gene]
         merged = pd.concat([genedf1, genedf2])
-        merged2 = merged.apply(_renamer, axis=1, args=(sigks.index, statsres.index, enstdf))
+        merged2 = merged.apply(_renamer, axis=1, args=(sigks.index, statsres.index))
         print merged2.shape
         sns.violinplot(x="newlabel", y="psi_i", hue="group", data=merged2, split=True,
                        inner="quart", cut=0, palette={sampname1: "r", sampname2: "b"})
@@ -85,38 +85,24 @@ def plotsig_violin(sigks, statsres, sciso1, sciso2, outfile, sampname1, sampname
     return
 
 
-def plotsig_hist(sigks, statsres, disco1, disco2, outfile, sampname1, sampname2):
-    pass
+# def plotsig_hist(sigks, statsres, disco1, disco2, outfile, sampname1, sampname2):
+#     pass
 
 
-def _renamer1samp(x, enstdf, dummy):
-    isfshort = x["isfshortname"]
-    # geneisf = x["gene!isoform"]
-    # if geneisf in sigkeys:
-    #     # newlabel = isfshort+"*"
-    #     newlabel = isfshort.strip("isf-")+"*"
-    # elif geneisf in kskeys:
-    #     # newlabel = isfshort
-    #     newlabel = isfshort.strip("isf-")+"-"
-    # else:
-        # newlabel = isfshort+"/"
-    newlabel = isfshort.strip("isf-")
-    return x.append(pd.Series([newlabel], index=["newlabel"]))
-
-
-def plotviolin_1samp(disco, genestoplot, outfile, enstfile):
-    enstdf = pd.DataFrame.from_csv(enstfile, sep="\t", index_col=1)
+def plotviolin_1samp(disco, genestoplot, outfile):
+    # todo this is probably not working, fix it
+    # enstdf = pd.DataFrame.from_csv(enstfile, sep="\t", index_col=1)
     sns.set(style="dark", palette="muted", color_codes=True, font_scale=1.5)
     plotspdf = pdf.PdfPages(outfile)
     alldatadf = disco.alldatadf
-    dummy = None
     # genestoplot = sigks["Ensemble_ID"].unique()
     print "Plotting ", len(genestoplot), " genes"
     for gene in genestoplot:
         # print gene
         genedf = alldatadf[alldatadf["event_name"] == gene]
         print genedf
-        genedf2 = genedf.apply(_renamer1samp, axis=1, args=(enstdf, dummy))
+        genedf2 = genedf.apply(lambda x: x.append(pd.Series([x["isfshortname"].strip("isf-")], index=["newlabel"])),
+                               axis=1)
         sns.violinplot(x="newlabel", y="psi_i", data=genedf2,
                        inner="quart", cut=0)
         plt.title(genedf)
@@ -137,4 +123,3 @@ def plotviolin_1samp(disco, genestoplot, outfile, enstfile):
     print "Saved plots to", outfile
     sns.set()
     return
-    pass
