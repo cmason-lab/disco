@@ -26,11 +26,16 @@ def stat_test(disco1, disco2, outfile, maxciw=1, mininfreads=0, mindefreads=0, m
     samp2psis = filterdf(samp2datadf, maxciw, mininfreads, mindefreads, minnumcells)
     print "Filtered Sample 2:", samp2psis.shape
     print
-    intersectkeys = set(samp1psis.index) & set(samp2psis.index)
-    print "Number of shared isoforms:", len(intersectkeys)
+    # intersectkeys = set(samp1psis.index) & set(samp2psis.index)
+    # print "Number of shared isoforms:", len(intersectkeys)
+    # samp1kept = samp1psis.loc[intersectkeys, ]
+    # samp2kept = samp2psis.loc[intersectkeys, ]
 
-    samp1kept = samp1psis.loc[intersectkeys, ]
-    samp2kept = samp2psis.loc[intersectkeys, ]
+    unionkeys = set(samp1psis.index) | set(samp2psis.index)
+    print "Number of total isoforms:", len(unionkeys)
+    # might need to reindex df2 = df.reindex([newindex1, newindex2, ...])
+    samp1kept = samp1psis.loc[unionkeys, ]  # todo handle error of missing index (fill with NAs)
+    samp2kept = samp2psis.loc[unionkeys, ]
 
     joineddf = samp1kept.join(samp2kept)
     newkeys = filterminavgpsi(joineddf, minavgpsi)
