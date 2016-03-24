@@ -3,3 +3,4 @@
 build/*
 dist/*
 disco.egg-info/*
+disco/*.pyc
