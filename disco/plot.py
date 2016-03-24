@@ -8,7 +8,7 @@ sns.set_context("talk", font_scale=1.5)
 sns.set_style("darkgrid")
 
 
-def plotsig_violin(sigks, statsres, sciso1, sciso2, outfile, sampname1, sampname2):
+def plotsig_violin(sigks, statsres, sciso1, sciso2, outfile, sampname1, sampname2, color1="r", color2="b"):
     # enstdf = pd.DataFrame.from_csv(enstfile, sep="\t", index_col=1)
     sns.set(style="dark", palette="muted", color_codes=True, font_scale=1.5)
     plotspdf = pdf.PdfPages(outfile)
@@ -26,7 +26,7 @@ def plotsig_violin(sigks, statsres, sciso1, sciso2, outfile, sampname1, sampname
         merged2 = merged.apply(_renamer, axis=1, args=(sigks.index, statsres.index))
         print merged2.shape
         sns.violinplot(x="newlabel", y="psi_i", hue="group", data=merged2, split=True,
-                       inner="quart", cut=0, palette={sampname1: "r", sampname2: "b"})
+                       inner="quart", cut=0, palette={sampname1: color1, sampname2: color2})
         annrow = sigks[sigks["Ensemble_ID"] == gene].iloc[0]
         if annrow["Gene_Symbol"] is None:
             plt.title(gene)

@@ -30,13 +30,18 @@ def main():
     parser.add_argument('--group2name', metavar="", dest='group2name', type=str,
                         default="group2",
                         help="Name for group 2 to use in tables and plots")
+    parser.add_argument('--group1color', metavar="", dest='group1color', type=str,
+                        default="r",
+                        help="Color in plots for group 1; can be {y, m, c, r, g, b, w, k} or html code")
+    parser.add_argument('--group2color', metavar="", dest='group2color', type=str,
+                        default="b",
+                        help="Color in plots for group 2; can be {y, m, c, r, g, b, w, k} or html code")
     parser.add_argument('--outfile1', metavar="", dest='outfile1', type=str,
                         default="./disco_output/group1_alldatadf.txt",
                         help="output file for sample group 1")
     parser.add_argument('--outfile2', metavar="", dest='outfile2', type=str,
                         default="./disco_output/group2_alldatadf.txt",
                         help="output file for sample group 2")
-    # todo add group1 color and group2 color (with options)
     parser.add_argument('--annotationfile', metavar="", dest='annotationfile', type=str,
                         default=None,
                         help="File with gene annotations")
@@ -75,7 +80,7 @@ def main():
                         args.minnumcells, args.annotationfile, args.stattest)
     sigks = getsig(statres, minmedianshift=args.minmedianshift, outfile=args.comppref+"_sig"+args.stattest+"test.txt")
     plotsig_violin(sigks, statres, disco1, disco2, args.comppref+"_sig"+args.stattest+"test_violinplots.pdf",
-                   args.group1name, args.group2name)
+                   args.group1name, args.group2name, args.group1color, args.group2color)
 
 if __name__ == '__main__':
     main()
