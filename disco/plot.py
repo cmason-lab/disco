@@ -70,14 +70,13 @@ def plotviolin_1samp(disco, genestoplot, outfile):
     # genestoplot = sigks["Ensemble_ID"].unique()
     print "Plotting ", len(genestoplot), " genes"
     for gene in genestoplot:
-        # print gene
+        print gene
         genedf = alldatadf[alldatadf["event_name"] == gene]
-        print genedf
+        print genedf.shape
         genedf2 = genedf.apply(lambda x: x.append(pd.Series([x["isfshortname"].strip("isf-")], index=["newlabel"])),
                                axis=1)
-        sns.violinplot(x="newlabel", y="psi_i", data=genedf2,
-                       inner="quart", cut=0)
-        plt.title(genedf)
+        sns.violinplot(x="newlabel", y="psi_i", data=genedf2, inner="quartile")
+        plt.title(gene)
         # annrow = sigks[sigks["Ensemble_ID"] == gene].iloc[0]
         # if annrow["Gene_Symbol"] is None:
         #     plt.title(gene)
