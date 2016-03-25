@@ -61,29 +61,27 @@ def _renamer(x, sigkeys, kskeys):
     return x.append(pd.Series([newlabel], index=["newlabel"]))
 
 
-def plotviolin_1samp(disco, genestoplot, outfile):
-    # todo this is probably not working, fix it
-    # enstdf = pd.DataFrame.from_csv(enstfile, sep="\t", index_col=1)
+def plotviolin_1samp(disco, sigks, outfile):
     sns.set(style="dark", palette="muted", color_codes=True, font_scale=1.5)
     plotspdf = pdf.PdfPages(outfile)
     alldatadf = disco.alldatadf
-    # genestoplot = sigks["Ensemble_ID"].unique()
+    genestoplot = sigks["Ensemble_ID"].unique()
     print "Plotting ", len(genestoplot), " genes"
-    for gene in genestoplot:
+    for i in range(len(genestoplot)):
+        gene = genestoplot[i]
         print gene
         genedf = alldatadf[alldatadf["event_name"] == gene]
         print genedf.shape
         genedf2 = genedf.apply(lambda x: x.append(pd.Series([x["isfshortname"].strip("isf-")], index=["newlabel"])),
                                axis=1)
         sns.violinplot(x="newlabel", y="psi_i", data=genedf2, inner="quartile", cut=0)
-        plt.title(gene)
-        # annrow = sigks[sigks["Ensemble_ID"] == gene].iloc[0]
-        # if annrow["Gene_Symbol"] is None:
-        #     plt.title(gene)
-        #     print gene
-        # else:
-        #     plt.title(annrow["Gene_Symbol"]+"\n"+annrow["Gene_Name"]+"; "+annrow["Locus"])
-        #     print annrow["Gene_Symbol"]
+        annrow = sigks[sigks["Ensemble_ID"] == gene].iloc[0]
+        if annrow["Gene_Symbol"] is None:
+            plt.title(gene)
+            print gene
+        else:
+            plt.title(annrow["Gene_Symbol"]+"\n"+annrow["Gene_Name"]+"; "+annrow["Locus"])
+            print annrow["Gene_Symbol"]
         plt.ylabel("Distribution of Isoform Expression")
         plt.xlabel("Isoform")
         # plt.legend(loc='upper left', bbox_to_anchor=(1.0, 0.9))
