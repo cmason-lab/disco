@@ -75,7 +75,7 @@ def plotviolin_1samp(disco, genestoplot, outfile):
         print genedf.shape
         genedf2 = genedf.apply(lambda x: x.append(pd.Series([x["isfshortname"].strip("isf-")], index=["newlabel"])),
                                axis=1)
-        sns.violinplot(x="newlabel", y="psi_i", data=genedf2, inner="quartile")
+        sns.violinplot(x="newlabel", y="psi_i", data=genedf2, inner="quartile", cut=0)
         plt.title(gene)
         # annrow = sigks[sigks["Ensemble_ID"] == gene].iloc[0]
         # if annrow["Gene_Symbol"] is None:
