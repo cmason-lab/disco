@@ -10,6 +10,7 @@ def main():
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-v', '--version', action='version',
                         version='%(prog)s '+pkg_resources.require("disco")[0].version)
+    # todo change this to inputting a sample annotation file
     parser.add_argument('samp1list', metavar='SampleGroup1', type=str,
                         help='comma delimited list of group 1 sample names')
     parser.add_argument('samp2list', metavar='SampleGroup2', type=str,
