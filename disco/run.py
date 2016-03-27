@@ -2,7 +2,7 @@
 import argparse
 import pkg_resources
 from disco import *
-
+import os
 
 def main():
     parser = argparse.ArgumentParser(prog='disco',
@@ -11,41 +11,34 @@ def main():
     parser.add_argument('-v', '--version', action='version',
                         version='%(prog)s '+pkg_resources.require("disco")[0].version)
     # todo change this to inputting a sample annotation file
-    parser.add_argument('samp1list', metavar='SampleGroup1', type=str,
-                        help='comma delimited list of group 1 sample names')
-    parser.add_argument('samp2list', metavar='SampleGroup2', type=str,
-                        help='comma delimited list of group 2 sample names')
-    parser.add_argument('--datapath', metavar="", dest='datapath', type=str,
-                        default="./miso_summaryfiles/",
-                        help='path with miso summary files; '
-                             'searching in /datapath/sample* for sample in SampleGroup1 and SampleGroup2')
-    parser.add_argument('--comppref', metavar="", dest='comppref', type=str,
-                        default="./disco_output/disco-g1vg2",
-                        help="Prefix (including path) for naming output comparison files and plots")
+    parser.add_argument('sampleannfile', metavar='SampleAnnotationFile', type=str,
+                        help='filename of tab separated text, no header, with columns: '
+                             '<path to miso summary file> <sample name> <group name>')
+    parser.add_argument('group1', metavar='Group1', type=str,
+                        help='must match a group name in sample annotation file')
+    parser.add_argument('group2', metavar='Group2', type=str,
+                        help='must match a group name in sample annotation file')
+    parser.add_argument('--outdir', metavar="", dest='outdir', type=str,
+                        default="./disco_output/",
+                        help="Output directory")
     parser.add_argument('--pkldir', metavar="", dest='pkldir', type=str,
                         default="./pkldir",
                         help="Directory to store intermediate data processing files")
-    parser.add_argument('--group1name', metavar="", dest='group1name', type=str,
-                        default="group1",
-                        help="Name for group 1 to use in tables and plots")
-    parser.add_argument('--group2name', metavar="", dest='group2name', type=str,
-                        default="group2",
-                        help="Name for group 2 to use in tables and plots")
     parser.add_argument('--group1color', metavar="", dest='group1color', type=str,
                         default="r",
                         help="Color in plots for group 1; can be {y, m, c, r, g, b, w, k} or html code")
     parser.add_argument('--group2color', metavar="", dest='group2color', type=str,
                         default="b",
                         help="Color in plots for group 2; can be {y, m, c, r, g, b, w, k} or html code")
-    parser.add_argument('--outfile1', metavar="", dest='outfile1', type=str,
-                        default="./disco_output/group1_alldatadf.txt",
-                        help="output file for sample group 1")
-    parser.add_argument('--outfile2', metavar="", dest='outfile2', type=str,
-                        default="./disco_output/group2_alldatadf.txt",
-                        help="output file for sample group 2")
-    parser.add_argument('--annotationfile', metavar="", dest='annotationfile', type=str,
+    parser.add_argument('--group1file', metavar="", dest='group1file', type=str,
+                        help="output file for sample group 1. If not specified, "
+                             "will save to <outdir>/<group1name>_alldatadf.txt")
+    parser.add_argument('--group2file', metavar="", dest='group2file', type=str,
+                        help="output file for sample group 2. If not specified, "
+                             "will save to <outdir>/<group2name>_alldatadf.txt")
+    parser.add_argument('--geneannotationfile', metavar="", dest='geneannotationfile', type=str,
                         default=None,
-                        help="File with gene annotations")
+                        help="Mapping of Ensembl gene IDs to HGNC symbol and gene descriptions")
     parser.add_argument('--maxciwidth', metavar="", dest='maxciw', type=float,
                         default=1.0,
                         help="Maximum width of confidence interval of PSI estimate")
@@ -70,18 +63,24 @@ def main():
                         default="KS",
                         help="Which test to run? options: {KS, T}")  # options kstest or ttest
 
-    # default, choices, help
     args = parser.parse_args()
 
-    # print args
-    disco1 = Disco(args.samp1list.split(","), args.datapath, args.outfile1, args.pkldir)
-    disco2 = Disco(args.samp2list.split(","), args.datapath, args.outfile2, args.pkldir)
-    statres = stat_test(disco1, disco2, args.comppref+"_"+args.stattest+"res.txt",
+    if not os.path.exists(args.outdir):
+        os.makedirs(args.outdir)
+
+    group1out = args.outdir+"/"+args.group1+"_alldatadf.txt" if args.group1file is None else args.group1file
+    group2out = args.outdir+"/"+args.group2+"_alldatadf.txt" if args.group2file is None else args.group2file
+    disco1 = Disco(args.sampleannfile, args.group1, group1out, args.pkldir)
+    disco2 = Disco(args.sampleannfile, args.group2, group2out, args.pkldir)
+    statres = stat_test(disco1, disco2,
+                        args.outdir+"/"+args.group1+"vs"+args.group2+"_"+args.stattest+"_allresults.txt",
                         args.maxciw, args.mininfreads, args.mindefreads, args.minavgpsi,
-                        args.minnumcells, args.annotationfile, args.stattest)
-    sigks = getsig(statres, minmedianshift=args.minmedianshift, outfile=args.comppref+"_sig"+args.stattest+"test.txt")
-    plotsig_violin(sigks, statres, disco1, disco2, args.comppref+"_sig"+args.stattest+"test_violinplots.pdf",
-                   args.group1name, args.group2name, args.group1color, args.group2color)
+                        args.minnumcells, args.geneannotationfile, args.stattest)
+    sigks = getsig(statres, minmedianshift=args.minmedianshift,
+                   outfile=args.outdir+"/"+args.group1+"vs"+args.group2+"_"+args.stattest+"_significantresults.txt")
+    plotsig_violin(sigks, statres, disco1, disco2,
+                   args.outdir+"/"+args.group1+"vs"+args.group2+"_"+args.stattest+"_violinplots.pdf",
+                   args.group1, args.group2, args.group1color, args.group2color)
 
 if __name__ == '__main__':
     main()

@@ -9,17 +9,15 @@ import matplotlib.pyplot as plt
 
 
 class Disco:
-    def __init__(self, samples, datapath, outfile="alldatadf.txt", pkldir="picklefiles_isocentric"):
+    def __init__(self, sampleannfile, groupname, outfile="alldatadf.txt", pkldir="picklefiles_isocentric"):
         """
-
-        :type datapath: str
-        :type samples: list
         """
-        self.samples = samples
-        self.datapath = datapath
+        sampleann = pd.DataFrame.from_csv(sampleannfile, sep="\t", header=None)
+        groupdf = sampleann[sampleann[2] == groupname]
+        # print sampleann.head()
+        # print groupdf.head()
+        self.sampleann = groupdf
         self.outfile = outfile
-        self.filenames = None
-        self.cellnames = None
         self.cellsfailed = []
         self.pkldir = pkldir
         if os.path.exists(outfile):
@@ -36,15 +34,14 @@ class Disco:
         # todo add transcript type annotation
 
     def _process(self):
-        filenames = []
-        for sample in self.samples:
-            filenames += glob.glob(self.datapath + "/" + sample + "*")
+        # filenames = list(self.sampleann.index)
+        # cellnames = list(self.sampleann[1])
         # print filenames
         # filenames.remove("../miso/summaryfiles/MDS4-B12_miso-output.miso_summary")  # temp workaround for unknown bug
-        self.filenames = filenames
-        cellnames = [i.split("/")[len(i.split("/")) - 1].split("_")[0] for i in filenames]
-        self.cellnames = cellnames
-        pklfiles = [self.readsummfile(i) for i in range(len(filenames))]
+
+        # self.cellnames = cellnames
+        pklfiles = [self.readsummfile(i) for i in range(self.sampleann.shape[0])]
+        # print self.sampleann.shape
         results = []
         for p in pklfiles:
             if p is None:
@@ -59,8 +56,8 @@ class Disco:
         return resultsdf
 
     def readsummfile(self, sampindex):
-        filename = self.filenames[sampindex]
-        cellname = self.cellnames[sampindex]
+        filename = self.sampleann.index[sampindex]
+        cellname = self.sampleann.loc[filename][1]
         picklefile = self.pkldir + "/" + cellname + ".pkl"
         print cellname
         if os.path.exists(picklefile):
