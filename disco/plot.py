@@ -33,6 +33,7 @@ def plotsig_violin(sigks, statsres, sciso1, sciso2, outfile, sampname1, sampname
         else:
             plt.title(annrow["Gene_Symbol"]+"\n"+annrow["Gene_Name"]+"; "+annrow["Locus"])
             print annrow["Gene_Symbol"]
+        plt.ylim(0,1)
         plt.ylabel("Distribution of Isoform Expression")
         plt.xlabel("Isoform ( - tested, * significant )")
         plt.legend(loc='upper left', bbox_to_anchor=(1.0, 0.9))
@@ -78,6 +79,7 @@ def plotviolin_1samp(disco, sigks, outfile):
         genedf2 = genedf.apply(lambda x: x.append(pd.Series([x["isfshortname"].strip("isf-")], index=["newlabel"])),
                                axis=1)
         sns.violinplot(x="newlabel", y="psi_i", data=genedf2, inner="quartile", cut=0)
+        plt.ylim(0,1)
         annrow = sigks[sigks["Ensemble_ID"] == gene].iloc[0]
         if annrow["Gene_Symbol"] is None or str(annrow["Gene_Symbol"]) == "nan":
             plt.title(gene)
@@ -114,6 +116,7 @@ def plotbulk(sigks, statsres, disco1, disco2, sampname1, sampname2, color1, colo
         merged2 = merged.apply(_renamer, axis=1, args=(sigks.index, statsres.index, statsres['Isoform_Function']))
         sns.barplot(x="newlabel", y="psi_i", hue="group", data=merged2,
                     palette={sampname1: color1, sampname2: color2})
+        plt.ylim(0, 1)
         annrow = sigks[sigks["Ensemble_ID"] == gene].iloc[0]
         if annrow["Gene_Symbol"] is None:
             plt.title(gene)
