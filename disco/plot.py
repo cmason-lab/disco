@@ -105,7 +105,7 @@ def plotbulk(sigks, statsres, disco1, disco2, sampname1, sampname2, color1, colo
     alldatadf1["group"] = pd.Series(np.repeat(sampname1, alldatadf1.shape[0]), index=alldatadf1.index)
     alldatadf2["group"] = pd.Series(np.repeat(sampname2, alldatadf2.shape[0]), index=alldatadf2.index)
     genestoplot = sigks["Ensemble_ID"].unique()
-    for gene in genestoplot[0:5]:
+    for gene in genestoplot:
         genedf1 = alldatadf1[alldatadf1["event_name"] == gene]
         genedf1.head()
         genedf2 = alldatadf2[alldatadf2["event_name"] == gene]

@@ -72,34 +72,21 @@ def main():
     if not os.path.exists(args.outdir):
         os.makedirs(args.outdir)
 
-    # group1out = args.outdir+"/"+args.group1+"_alldatadf.txt" if args.group1file is None else args.group1file
-    # group2out = args.outdir+"/"+args.group2+"_alldatadf.txt" if args.group2file is None else args.group2file
-    # disco1 = Disco(args.sampleannfile, args.group1, group1out, args.pkldir)
-    # disco2 = Disco(args.sampleannfile, args.group2, group2out, args.pkldir)
-    # statres = stat_test(disco1, disco2,
-    #                     args.outdir+"/"+args.group1+"vs"+args.group2+"_"+args.stattest+"_allresults.txt",
-    #                     args.maxciw, args.mininfreads, args.mindefreads, args.minavgpsi,
-    #                     args.minnumcells, args.geneannotationfile, args.transcriptannotationfile, args.stattest)
-    statres = pd.DataFrame.from_csv(args.outdir+"/"+args.group1+"vs"+args.group2+"_"+args.stattest+"_allresults.txt",
-                                    sep="\t")
-    # sigks = getsig(statres, minmedianshift=args.minmedianshift,
-    #                outfile=args.outdir+"/"+args.group1+"vs"+args.group2+"_"+args.stattest+"_significantresults.txt")
-    sigks = pd.DataFrame.from_csv(args.outdir+"/"+args.group1+"vs"+args.group2+"_"+args.stattest+"_significantresults.txt",
-                                  sep="\t")
-    # plotsig_violin(sigks, statres, disco1, disco2,
-    #                args.outdir+"/"+args.group1+"vs"+args.group2+"_"+args.stattest+"_violinplots.pdf",
-    #                args.group1, args.group2, args.group1color, args.group2color)
-    # hack plot pt6 bulk
-    if args.group1 == "PT6-pre":
-        bulkdisco1 = Disco(args.sampleannfile, "PT6pre-bulkprog",
-                           "MDSbulk_summaryfiles_isf/PT6pre-bulkprog_alldatadf.txt",
-                           "MDSbulk_summaryfiles_isf/picklefiles")
-        bulkdisco2 = Disco(args.sampleannfile, "PT6post-bulkprog",
-                           "MDSbulk_summaryfiles_isf/PT6post-bulkprog_alldatadf.txt",
-                           "MDSbulk_summaryfiles_isf/picklefiles")
-        plotbulk(sigks, statres, bulkdisco1, bulkdisco2, "PT6pre-bulkprog", "PT6post-bulkprog",
-                 args.group1color, args.group2color,
-                 args.outdir+"/"+args.group1+"vs"+args.group2+"_"+args.stattest+"_bulkprogenitorplots.pdf")
+    group1out = args.outdir+"/"+args.group1+"_alldatadf.txt" if args.group1file is None else args.group1file
+    group2out = args.outdir+"/"+args.group2+"_alldatadf.txt" if args.group2file is None else args.group2file
+    disco1 = Disco(args.sampleannfile, args.group1, group1out, args.pkldir)
+    disco2 = Disco(args.sampleannfile, args.group2, group2out, args.pkldir)
+    statres = stat_test(disco1, disco2,
+                        args.outdir+"/"+args.group1+"vs"+args.group2+"_"+args.stattest+"_allresults.txt",
+                        args.maxciw, args.mininfreads, args.mindefreads, args.minavgpsi,
+                        args.minnumcells, args.geneannotationfile, args.transcriptannotationfile, args.stattest)
+
+    sigks = getsig(statres, minmedianshift=args.minmedianshift,
+                   outfile=args.outdir+"/"+args.group1+"vs"+args.group2+"_"+args.stattest+"_significantresults.txt")
+
+    plotsig_violin(sigks, statres, disco1, disco2,
+                   args.outdir+"/"+args.group1+"vs"+args.group2+"_"+args.stattest+"_violinplots.pdf",
+                   args.group1, args.group2, args.group1color, args.group2color)
 
 
 if __name__ == '__main__':
