@@ -5,7 +5,6 @@ import matplotlib.backends.backend_pdf as pdf
 import seaborn as sns
 
 sns.set_context("talk", font_scale=1.5)
-sns.set_style("darkgrid")
 
 
 def plotsig_violin(sigks, statsres, sciso1, sciso2, outfile, sampname1, sampname2, color1="r", color2="b"):
@@ -90,6 +89,40 @@ def plotviolin_1samp(disco, sigks, outfile):
         plt.xlabel("Isoform")
         # plt.legend(loc='upper left', bbox_to_anchor=(1.0, 0.9))
         # plt.subplots_adjust(top=0.88, right=0.8, bottom=0.12)
+        plotspdf.savefig()
+        plt.close()
+    plotspdf.close()
+    print "Saved plots to", outfile
+    sns.set()
+    return
+
+
+def plotbulk(sigks, statsres, disco1, disco2, sampname1, sampname2, color1, color2, outfile):
+    sns.set(style="dark", palette="muted", color_codes=True, font_scale=1.5)
+    plotspdf = pdf.PdfPages(outfile)
+    alldatadf1 = disco1.alldatadf
+    alldatadf2 = disco2.alldatadf
+    alldatadf1["group"] = pd.Series(np.repeat(sampname1, alldatadf1.shape[0]), index=alldatadf1.index)
+    alldatadf2["group"] = pd.Series(np.repeat(sampname2, alldatadf2.shape[0]), index=alldatadf2.index)
+    genestoplot = sigks["Ensemble_ID"].unique()
+    for gene in genestoplot:
+        genedf1 = disco1.alldatadf[disco1.alldatadf["event_name"] == gene]
+        genedf2 = disco1.alldatadf[disco1.alldatadf["event_name"] == gene]
+        merged = pd.concat([genedf1, genedf2])
+        merged2 = merged.apply(_renamer, axis=1, args=(sigks.index, statsres.index, statsres['Isoform_Function']))
+        sns.barplot(x="newlabel", y="psi_i", hue="group", data=merged2, ci=None,
+                    palette={sampname1: color1, sampname2: color2})
+        annrow = sigks[sigks["Ensemble_ID"] == gene].iloc[0]
+        if annrow["Gene_Symbol"] is None:
+            plt.title(gene)
+            print gene
+        else:
+            plt.title(annrow["Gene_Symbol"]+"\n"+annrow["Gene_Name"]+"; "+annrow["Locus"])
+            print annrow["Gene_Symbol"]
+        plt.ylabel("Distribution of Isoform Expression")
+        plt.xlabel("Isoform ( - tested, * significant )")
+        plt.legend(loc='upper left', bbox_to_anchor=(1.0, 0.9))
+        plt.subplots_adjust(top=0.88, right=0.8, bottom=0.2)
         plotspdf.savefig()
         plt.close()
     plotspdf.close()

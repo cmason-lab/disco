@@ -48,7 +48,10 @@ class Disco:
             else:
                 results.append(pd.read_pickle(p))
         # results = [pd.read_pickle(p) for p in pklfiles]
-        resultsdf = pd.concat(results, axis=0)
+        if len(results) > 1:
+            resultsdf = pd.concat(results, axis=0)
+        else:
+            resultsdf = results
         resultsdf.index = resultsdf["gene!isoform"]
         # resultsdf["ciwidth_i"] = resultsdf["cihigh_i"] - resultsdf["cilow_i"]
         resultsdf.to_csv(self.outfile, sep="\t")
