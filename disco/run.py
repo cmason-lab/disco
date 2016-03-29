@@ -4,13 +4,13 @@ import pkg_resources
 from disco import *
 import os
 
+
 def main():
     parser = argparse.ArgumentParser(prog='disco',
                                      description='DISCO: Distributions of Isoforms in Single Cell Omics',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-v', '--version', action='version',
                         version='%(prog)s '+pkg_resources.require("disco")[0].version)
-    # todo change this to inputting a sample annotation file
     parser.add_argument('sampleannfile', metavar='SampleAnnotationFile', type=str,
                         help='filename of tab separated text, no header, with columns: '
                              '<path to miso summary file> <sample name> <group name>')
@@ -39,6 +39,9 @@ def main():
     parser.add_argument('--geneannotationfile', metavar="", dest='geneannotationfile', type=str,
                         default=None,
                         help="Mapping of Ensembl gene IDs to HGNC symbol and gene descriptions")
+    parser.add_argument('--transcriptannotationfile', metavar="", dest='transcriptannotationfile', type=str,
+                        default=None,
+                        help="Mapping of Ensembl transcript IDs to isoform function (ex. protein coding, NMD, etc)")
     parser.add_argument('--maxciwidth', metavar="", dest='maxciw', type=float,
                         default=1.0,
                         help="Maximum width of confidence interval of PSI estimate")
@@ -75,7 +78,7 @@ def main():
     statres = stat_test(disco1, disco2,
                         args.outdir+"/"+args.group1+"vs"+args.group2+"_"+args.stattest+"_allresults.txt",
                         args.maxciw, args.mininfreads, args.mindefreads, args.minavgpsi,
-                        args.minnumcells, args.geneannotationfile, args.stattest)
+                        args.minnumcells, args.geneannotationfile, args.transcriptannotationfile, args.stattest)
     sigks = getsig(statres, minmedianshift=args.minmedianshift,
                    outfile=args.outdir+"/"+args.group1+"vs"+args.group2+"_"+args.stattest+"_significantresults.txt")
     plotsig_violin(sigks, statres, disco1, disco2,

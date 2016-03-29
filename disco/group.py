@@ -31,7 +31,6 @@ class Disco:
             self.alldatadf = datadf
         else:
             self.alldatadf = self._process()
-        # todo add transcript type annotation
 
     def _process(self):
         # filenames = list(self.sampleann.index)
@@ -146,8 +145,6 @@ class Disco:
         plt.show()
         # todo only keep top 7
         return ax
-
-# todo test only 1 isoform when 2 exist
 
 # def _medianshift(x, samp1psis, samp2psis):
 #     shift = samp1psis.loc[x.name].

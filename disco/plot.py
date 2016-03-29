@@ -23,8 +23,8 @@ def plotsig_violin(sigks, statsres, sciso1, sciso2, outfile, sampname1, sampname
         genedf1 = alldatadf1[alldatadf1["event_name"] == gene]
         genedf2 = alldatadf2[alldatadf2["event_name"] == gene]
         merged = pd.concat([genedf1, genedf2])
-        merged2 = merged.apply(_renamer, axis=1, args=(sigks.index, statsres.index))
-        print merged2.shape
+        merged2 = merged.apply(_renamer, axis=1, args=(sigks.index, statsres.index, statsres['Isoform_Function']))
+        # print merged2.shape
         sns.violinplot(x="newlabel", y="psi_i", hue="group", data=merged2, split=True,
                        inner="quart", cut=0, palette={sampname1: color1, sampname2: color2})
         annrow = sigks[sigks["Ensemble_ID"] == gene].iloc[0]
@@ -37,7 +37,7 @@ def plotsig_violin(sigks, statsres, sciso1, sciso2, outfile, sampname1, sampname
         plt.ylabel("Distribution of Isoform Expression")
         plt.xlabel("Isoform ( - tested, * significant )")
         plt.legend(loc='upper left', bbox_to_anchor=(1.0, 0.9))
-        plt.subplots_adjust(top=0.88, right=0.8, bottom=0.12)
+        plt.subplots_adjust(top=0.88, right=0.8, bottom=0.2)
         plotspdf.savefig()
         plt.close()
     plotspdf.close()
@@ -46,15 +46,19 @@ def plotsig_violin(sigks, statsres, sciso1, sciso2, outfile, sampname1, sampname
     return
 
 
-def _renamer(x, sigkeys, kskeys):
+def _renamer(x, sigkeys, kskeys, isffunc):
     isfshort = x["isfshortname"]
     geneisf = x["gene!isoform"]
     if geneisf in sigkeys:
         # newlabel = isfshort+"*"
-        newlabel = isfshort.strip("isf-")+"*"
+        func = isffunc[geneisf]
+        func = "" if func is None else func
+        newlabel = isfshort.strip("isf-")+"*\n"+func
     elif geneisf in kskeys:
         # newlabel = isfshort
-        newlabel = isfshort.strip("isf-")+"-"
+        func = isffunc[geneisf]
+        func = "" if func is None else func
+        newlabel = isfshort.strip("isf-")+"-\n"+func
     else:
         # newlabel = isfshort+"/"
         newlabel = isfshort.strip("isf-")
@@ -71,7 +75,7 @@ def plotviolin_1samp(disco, sigks, outfile):
         gene = genestoplot[i]
         print gene
         genedf = alldatadf[alldatadf["event_name"] == gene]
-        print genedf.shape
+        # print genedf.shape
         genedf2 = genedf.apply(lambda x: x.append(pd.Series([x["isfshortname"].strip("isf-")], index=["newlabel"])),
                                axis=1)
         sns.violinplot(x="newlabel", y="psi_i", data=genedf2, inner="quartile", cut=0)

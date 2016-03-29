@@ -5,7 +5,7 @@ from scipy import stats
 
 # Functions for filtering and comparison
 def stat_test(disco1, disco2, outfile, maxciw=1, mininfreads=0, mindefreads=0, minavgpsi=0, minnumcells=0,
-              annotationfile=None, testtype="KS"):
+              geneannfile=None, transcriptannfile=None, testtype="KS"):
     """
     testtype: {KS, T}
     possible filters:
@@ -33,8 +33,7 @@ def stat_test(disco1, disco2, outfile, maxciw=1, mininfreads=0, mindefreads=0, m
 
     unionkeys = set(samp1psis.index) | set(samp2psis.index)
     print "Number of total isoforms:", len(unionkeys)
-    # might need to reindex df2 = df.reindex([newindex1, newindex2, ...])
-    samp1kept = samp1psis.loc[unionkeys, ]  # todo handle error of missing index (fill with NAs)
+    samp1kept = samp1psis.loc[unionkeys, ]
     samp2kept = samp2psis.loc[unionkeys, ]
 
     joineddf = samp1kept.join(samp2kept)
@@ -44,6 +43,7 @@ def stat_test(disco1, disco2, outfile, maxciw=1, mininfreads=0, mindefreads=0, m
     samp1kept2 = samp1kept.loc[newkeys, ]
     samp2kept2 = samp2kept.loc[newkeys, ]
 
+    # todo test only 1 isoform when 2 exist (might already be doing this..)
     if testtype == "KS":
         print "Running KS test"
         statsres = samp1kept2.apply(lambda x: pd.Series(stats.ks_2samp(x, samp2kept2.loc[x.name, ]),
@@ -61,21 +61,26 @@ def stat_test(disco1, disco2, outfile, maxciw=1, mininfreads=0, mindefreads=0, m
     medianshifts = samp1kept2.median(axis=1) - samp2kept2.median(axis=1)
     statsres2 = statsres.apply(lambda x: x.append(pd.Series([medianshifts.loc[x.name]],
                                                             index=["median_shift"], name=x.name)), axis=1)
-
-    if annotationfile is None:
-        print
-        print "Final result:", statsres.shape
-        return statsres
-    annotationdf = pd.DataFrame.from_csv(annotationfile, sep="\t", index_col=9)
-    statsres_ann = statsres2.apply(_getannotation, axis=1, args=(annotationdf, "d"))
-
+    statsres = statsres2
+    if geneannfile is not None:
+        # todo clean up hardcoding
+        annotationdf = pd.DataFrame.from_csv(geneannfile, sep="\t", index_col=9)
+        statsres_ann = statsres.apply(_getannotation, axis=1, args=(annotationdf, "dummy"))
+        statsres = statsres_ann
+    if transcriptannfile is not None:
+        # todo clean up hardcoding
+        enstannotationdf = pd.DataFrame.from_csv(transcriptannfile, sep="\t", index_col=None)
+        enstdf2 = enstannotationdf.drop_duplicates(['Ensembl Transcript ID'])
+        enstdf2.index = enstdf2['Ensembl Transcript ID']
+        statsres_ann = statsres.apply(_getenstannotation, axis=1, args=(enstdf2, "dummy"))
+        statsres = statsres_ann
     # todo add isf shortname to this DF
     # statsres_ann["isfshortname"] = samp1datadf.loc[statsres_ann.index]["isfshortname"]
 
-    statsres_ann.to_csv(outfile, sep="\t")
+    statsres.to_csv(outfile, sep="\t")
     print
-    print "Final result:", statsres_ann.shape
-    return statsres_ann
+    print "Final result:", statsres.shape
+    return statsres
 
 
 def _getannotation(x, annotationdf, dummy):
@@ -88,6 +93,21 @@ def _getannotation(x, annotationdf, dummy):
     else:
         y = pd.Series([ensid, None, None, None],
                       index=["Ensemble_ID", "Gene_Symbol", "Gene_Name", "Locus"],
+                      name=x.name)
+    return x.append(y)
+
+
+def _getenstannotation(x, enstdf, dummy):
+    # example: ENSG00000162244!ENST00000479017.exon3_ENST00000479017.exon2_ENS
+    ensid = x.name.split("!")[1].split(".")[0]
+    if ensid in enstdf.index:
+        annrow = enstdf.loc[ensid]
+        y = pd.Series([ensid, annrow["Transcript type"], annrow["Transcript length (including UTRs and CDS)"]],
+                      index=["Transcript_ID", "Isoform_Function", "Isoform_Length"],
+                      name=x.name)
+    else:
+        y = pd.Series([ensid, None, None],
+                      index=["Transcript_ID", "Isoform_Function", "Isoform_Length"],
                       name=x.name)
     return x.append(y)
 
