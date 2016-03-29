@@ -3,7 +3,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.backends.backend_pdf as pdf
 import seaborn as sns
-import math
 
 sns.set_context("talk", font_scale=1.5)
 
@@ -73,14 +72,14 @@ def plotviolin_1samp(disco, sigks, outfile):
     print "Plotting ", len(genestoplot), " genes"
     for i in range(len(genestoplot)):
         gene = genestoplot[i]
-        print gene
+        # print gene
         genedf = alldatadf[alldatadf["event_name"] == gene]
         # print genedf.shape
         genedf2 = genedf.apply(lambda x: x.append(pd.Series([x["isfshortname"].strip("isf-")], index=["newlabel"])),
                                axis=1)
         sns.violinplot(x="newlabel", y="psi_i", data=genedf2, inner="quartile", cut=0)
         annrow = sigks[sigks["Ensemble_ID"] == gene].iloc[0]
-        if annrow["Gene_Symbol"] is None:
+        if annrow["Gene_Symbol"] is None or str(annrow["Gene_Symbol"]) == "nan":
             plt.title(gene)
             print gene
         else:
