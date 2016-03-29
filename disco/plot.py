@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.backends.backend_pdf as pdf
 import seaborn as sns
+import math
 
 sns.set_context("talk", font_scale=1.5)
 
@@ -50,14 +51,14 @@ def _renamer(x, sigkeys, kskeys, isffunc):
     geneisf = x["gene!isoform"]
     if geneisf in sigkeys:
         # newlabel = isfshort+"*"
-        func = isffunc[geneisf]
-        func = "" if func is None else func
+        func = str(isffunc[geneisf])
+        func = "" if func is None or func == 'nan' else func
         newlabel = isfshort.strip("isf-")+"*\n"+func
     elif geneisf in kskeys:
         # newlabel = isfshort
-        func = isffunc[geneisf]
-        func = "" if func is None else func
-        newlabel = isfshort.strip("isf-")+"-\n"+func
+        func = str(isffunc[geneisf])
+        func = "" if func is None or func == 'nan' else func
+        newlabel = isfshort.strip("isf-")+"-"+"\n"+func
     else:
         # newlabel = isfshort+"/"
         newlabel = isfshort.strip("isf-")
@@ -105,12 +106,14 @@ def plotbulk(sigks, statsres, disco1, disco2, sampname1, sampname2, color1, colo
     alldatadf1["group"] = pd.Series(np.repeat(sampname1, alldatadf1.shape[0]), index=alldatadf1.index)
     alldatadf2["group"] = pd.Series(np.repeat(sampname2, alldatadf2.shape[0]), index=alldatadf2.index)
     genestoplot = sigks["Ensemble_ID"].unique()
-    for gene in genestoplot:
-        genedf1 = disco1.alldatadf[disco1.alldatadf["event_name"] == gene]
-        genedf2 = disco1.alldatadf[disco1.alldatadf["event_name"] == gene]
+    for gene in genestoplot[0:5]:
+        genedf1 = alldatadf1[alldatadf1["event_name"] == gene]
+        genedf1.head()
+        genedf2 = alldatadf2[alldatadf2["event_name"] == gene]
+        genedf2.head()
         merged = pd.concat([genedf1, genedf2])
         merged2 = merged.apply(_renamer, axis=1, args=(sigks.index, statsres.index, statsres['Isoform_Function']))
-        sns.barplot(x="newlabel", y="psi_i", hue="group", data=merged2, ci=None,
+        sns.barplot(x="newlabel", y="psi_i", hue="group", data=merged2,
                     palette={sampname1: color1, sampname2: color2})
         annrow = sigks[sigks["Ensemble_ID"] == gene].iloc[0]
         if annrow["Gene_Symbol"] is None:
@@ -120,7 +123,7 @@ def plotbulk(sigks, statsres, disco1, disco2, sampname1, sampname2, color1, colo
             plt.title(annrow["Gene_Symbol"]+"\n"+annrow["Gene_Name"]+"; "+annrow["Locus"])
             print annrow["Gene_Symbol"]
         plt.ylabel("Distribution of Isoform Expression")
-        plt.xlabel("Isoform ( - tested, * significant )")
+        plt.xlabel("Isoform ( - tested in sc, * significant in sc )")
         plt.legend(loc='upper left', bbox_to_anchor=(1.0, 0.9))
         plt.subplots_adjust(top=0.88, right=0.8, bottom=0.2)
         plotspdf.savefig()

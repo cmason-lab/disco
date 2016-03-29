@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import pandas as pd
-import glob
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -48,10 +47,11 @@ class Disco:
             else:
                 results.append(pd.read_pickle(p))
         # results = [pd.read_pickle(p) for p in pklfiles]
-        if len(results) > 1:
-            resultsdf = pd.concat(results, axis=0)
-        else:
-            resultsdf = results
+        # if len(results) > 1:
+        #     resultsdf = pd.concat(results, axis=0)
+        # else:
+        #     resultsdf = results[0]
+        resultsdf = pd.concat(results, axis=0)
         resultsdf.index = resultsdf["gene!isoform"]
         # resultsdf["ciwidth_i"] = resultsdf["cihigh_i"] - resultsdf["cilow_i"]
         resultsdf.to_csv(self.outfile, sep="\t")
