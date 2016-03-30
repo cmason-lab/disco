@@ -5,7 +5,15 @@ Distributions of Isoforms in Single Cell Omics
 python setup.py install
 
 ## Usage
-disco --help
+
+
+**To run with default settings:**
+
+disco path/to/samplefilelist.txt group1 group2
+
+
+**To see other options, including filtering (default is no filtering):**
+disco -h
 
 usage: disco [-h] [-v] [--outdir] [--pkldir] [--group1color] [--group2color]
              [--group1file] [--group2file] [--geneannotationfile]
@@ -15,7 +23,7 @@ usage: disco [-h] [-v] [--outdir] [--pkldir] [--group1color] [--group2color]
              SampleAnnotationFile Group1 Group2
 
 
-###positional arguments:
+**positional arguments:**
 
   SampleAnnotationFile  filename of tab separated text, no header, with
                         columns: <path to miso summary file> <sample name>
@@ -26,7 +34,7 @@ usage: disco [-h] [-v] [--outdir] [--pkldir] [--group1color] [--group2color]
   Group2                must match a group name in sample annotation file
 
 
-###optional arguments:
+**optional arguments:**
 
   -h, --help            show this help message and exit
 
