@@ -5,7 +5,7 @@ from setuptools import setup
 
 setup(
       name='disco',
-      version='0.2.0',
+      version='0.2.1',
       description='Python tools for analyzing single cell alternative splicing',
       author='Priyanka Vijay',
       author_email='prv2004@med.cornell.edu',

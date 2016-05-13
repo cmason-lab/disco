@@ -78,6 +78,7 @@ class Disco:
         try:
             df1 = pd.read_table(filename, sep="\t")
             print df1.shape
+            print df1.columns
             df1["cellname"] = pd.Series(np.repeat(cellname, df1.shape[0]), index=df1.index)
             df2 = df1.apply(self._readhelper1, 1)
             print df2.shape
@@ -105,14 +106,19 @@ class Disco:
         psis = map(float, x["miso_posterior_mean"].split(","))
         cilows = map(float, x["ci_low"].split(","))
         cihighs = map(float, x["ci_high"].split(","))
+        starts = map(int, x["mRNA_starts"].split(","))
+        ends = map(int, x["mRNA_ends"].split(","))
         # todo add isf chromosome start stops to long format
         if len(psis) == 1:
             psis.append(1 - psis[0])
             # extrapolate confidence interval to psi of next isoform by maintaining width and position within range
             cilows.append(psis[1]-(psis[0]-cilows[0]))
             cihighs.append(psis[1]+(cihighs[0]-psis[0]))
+
         # calculate num reads informative and definitive
         ciwidths = list(np.array(cihighs) - np.array(cilows))
+        lengthdiffs = list(np.array(ends) - np.array(starts))
+        isflengths = [abs(i) for i in lengthdiffs]
         readlist = x["counts"].split("(")
         numreadsinf = 0
         numreadsdef = 0
@@ -123,12 +129,29 @@ class Disco:
                 numreadsinf += int(segsplit[1])
             if sumisfcode == 1:
                 numreadsdef += int(segsplit[1])
+        #
+        tmpcounts = x["assigned_counts"].split(",")
+        # print tmpcounts
+        counts = {}
+        for c in tmpcounts:
+            csplit = map(int, c.split(":"))
+            counts[csplit[0]] = csplit[1]
+        # counts = [c.split(":")[1] for c in tmpcounts]
+        # print len(counts), len(psis)
         y = []
         for i in range(len(rownames)):
             y.append(x.append(pd.Series([rownames[i], isfshortnames[i], psis[i], cilows[i], cihighs[i], ciwidths[i],
-                                         numreadsinf, numreadsdef],
+                                         numreadsinf, numreadsdef, counts.get(i, 0), isflengths[i]],
                                         index=["gene!isoform", "isfshortname", "psi_i", "cilow_i", "cihigh_i",
-                                               "ciwidth_i", "numreadsinf", "numreadsdef"])))
+                                               "ciwidth_i", "numreadsinf", "numreadsdef", "assignedcounts_i",
+                                               "isflength_i"])))
+
+        # y = []
+        # for i in range(len(rownames)):
+        #     y.append(x.append(pd.Series([rownames[i], isfshortnames[i], psis[i], cilows[i], cihighs[i], ciwidths[i],
+        #                                  numreadsinf, numreadsdef],
+        #                                 index=["gene!isoform", "isfshortname", "psi_i", "cilow_i", "cihigh_i",
+        #                                        "ciwidth_i", "numreadsinf", "numreadsdef"])))
         return y
 
     @staticmethod

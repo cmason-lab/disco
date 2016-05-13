@@ -20,11 +20,13 @@ def stat_test(disco1, disco2, outfile, maxciw=1, mininfreads=0, mindefreads=0, m
     print "Sample 1:", samp1datadf.shape
     samp1psis = filterdf(samp1datadf, maxciw, mininfreads, mindefreads, minnumcells)
     print "Filtered Sample 1:", samp1psis.shape
+    samp1psis.to_csv(disco1.outfile.strip(".txt")+"_filtpsimat.txt", sep="\t")
     print
     samp2datadf = disco2.alldatadf
     print "Sample 2:", samp2datadf.shape
     samp2psis = filterdf(samp2datadf, maxciw, mininfreads, mindefreads, minnumcells)
     print "Filtered Sample 2:", samp2psis.shape
+    samp2psis.to_csv(disco2.outfile.strip(".txt")+"_filtpsimat.txt", sep="\t")
     print
     # intersectkeys = set(samp1psis.index) & set(samp2psis.index)
     # print "Number of shared isoforms:", len(intersectkeys)
