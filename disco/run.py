@@ -3,7 +3,6 @@ import argparse
 import pkg_resources
 from disco import *
 import os
-import pandas as pd
 
 
 def main():

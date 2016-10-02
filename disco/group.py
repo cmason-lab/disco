@@ -46,12 +46,14 @@ class Disco:
                 continue
             else:
                 results.append(pd.read_pickle(p))
+        # print pklfiles
+        # print len(pklfiles)
         # results = [pd.read_pickle(p) for p in pklfiles]
-        # if len(results) > 1:
-        #     resultsdf = pd.concat(results, axis=0)
-        # else:
-        #     resultsdf = results[0]
-        resultsdf = pd.concat(results, axis=0)
+        if len(results) > 1:
+            resultsdf = pd.concat(results, axis=0)
+        else:
+            resultsdf = results[0]
+        # resultsdf = pd.concat(results, axis=0)
         resultsdf.index = resultsdf["gene!isoform"]
         # resultsdf["ciwidth_i"] = resultsdf["cihigh_i"] - resultsdf["cilow_i"]
         resultsdf.to_csv(self.outfile, sep="\t")
@@ -74,12 +76,13 @@ class Disco:
         # df4 = pd.concat(df3)
         # print df4.shape
         # df4.to_pickle(picklefile)
-        # todo fix bug that causes some cells to fail and remove try/catch
+        # todo fix bug that causes some cells to fail and remove try/catch - bug fixed, remove try/catch
         try:
             df1 = pd.read_table(filename, sep="\t")
             print df1.shape
             print df1.columns
             df1["cellname"] = pd.Series(np.repeat(cellname, df1.shape[0]), index=df1.index)
+            print df1.columns
             df2 = df1.apply(self._readhelper1, 1)
             print df2.shape
             df3 = list(df2.apply(self._readhelper2, 1))
@@ -103,9 +106,10 @@ class Disco:
         for i in range(len(isfs)):
             rownames.append(gene + "!" + isfs[i].strip("\'"))
             isfshortnames.append("isf-"+str(i+1))
-        psis = map(float, x["miso_posterior_mean"].split(","))
-        cilows = map(float, x["ci_low"].split(","))
-        cihighs = map(float, x["ci_high"].split(","))
+        # casting to string to avoid error when there is only 1 psi
+        psis = map(float, str(x["miso_posterior_mean"]).split(","))
+        cilows = map(float, str(x["ci_low"]).split(","))
+        cihighs = map(float, str(x["ci_high"]).split(","))
         starts = map(int, x["mRNA_starts"].split(","))
         ends = map(int, x["mRNA_ends"].split(","))
         # todo add isf chromosome start stops to long format
