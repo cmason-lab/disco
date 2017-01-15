@@ -7,12 +7,12 @@ import seaborn as sns
 sns.set_context("talk", font_scale=1.5)
 
 
-def plotsig_violin(sigks, statsres, sciso1, sciso2, outfile, sampname1, sampname2, color1="r", color2="b"):
+def plotsig_violin(sigks, statsres, disco1, disco2, outfile, sampname1, sampname2, color1="r", color2="b"):
     # enstdf = pd.DataFrame.from_csv(enstfile, sep="\t", index_col=1)
     sns.set(style="dark", palette="muted", color_codes=True, font_scale=1.5)
     plotspdf = pdf.PdfPages(outfile)
-    alldatadf1 = sciso1.alldatadf
-    alldatadf2 = sciso2.alldatadf
+    alldatadf1 = disco1.alldatadf
+    alldatadf2 = disco2.alldatadf
     alldatadf1["group"] = pd.Series(np.repeat(sampname1, alldatadf1.shape[0]), index=alldatadf1.index)
     alldatadf2["group"] = pd.Series(np.repeat(sampname2, alldatadf2.shape[0]), index=alldatadf2.index)
     genestoplot = sigks.sort('median_shift')["Ensemble_ID"].unique()
@@ -34,9 +34,9 @@ def plotsig_violin(sigks, statsres, sciso1, sciso2, outfile, sampname1, sampname
             plt.title(gene)
             print gene
         else:
-            plt.title(annrow["Gene_Symbol"]+"\n"+annrow["Gene_Name"]+"; "+annrow["Locus"])
+            plt.title(str(annrow["Gene_Symbol"])+"\n"+str(annrow["Gene_Name"])+"; "+str(annrow["Locus"]))
             print annrow["Gene_Symbol"]
-        plt.ylim(0,1)
+        plt.ylim(0, 1)
         plt.ylabel("Distribution of Isoform Expression")
         plt.xlabel("Isoform ( - tested, * significant )")
         plt.legend(loc='upper left', bbox_to_anchor=(1.0, 0.9))
@@ -55,12 +55,12 @@ def _renamer(x, sigkeys, kskeys, isffunc):
     if geneisf in sigkeys:
         # newlabel = isfshort+"*"
         func = str(isffunc[geneisf])
-        func = "" if func is None or func == 'nan' else func
+        func = "" if func is None or func == 'nan' or func == "None" else func
         newlabel = isfshort.strip("isf-")+"*\n"+func
     elif geneisf in kskeys:
         # newlabel = isfshort
         func = str(isffunc[geneisf])
-        func = "" if func is None or func == 'nan' else func
+        func = "" if func is None or func == 'nan' or func == "None" else func
         newlabel = isfshort.strip("isf-")+"-"+"\n"+func
     else:
         # newlabel = isfshort+"/"

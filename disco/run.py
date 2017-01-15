@@ -3,7 +3,6 @@ import argparse
 import pkg_resources
 from disco import *
 import os
-import pandas as pd
 
 
 def main():
@@ -66,6 +65,9 @@ def main():
     parser.add_argument('--stattest', metavar="", dest='stattest', choices=["KS", "T"], type=str,
                         default="KS",
                         help="Which test to run? options: {KS, T}")  # options kstest or ttest
+    parser.add_argument('--pvalue', metavar="", dest='pvalue', type=float,
+                        default=0.05,
+                        help="P-value threshold for statistical significance")
 
     args = parser.parse_args()
 
@@ -81,7 +83,7 @@ def main():
                         args.maxciw, args.mininfreads, args.mindefreads, args.minavgpsi,
                         args.minnumcells, args.geneannotationfile, args.transcriptannotationfile, args.stattest)
 
-    sigks = getsig(statres, minmedianshift=args.minmedianshift,
+    sigks = getsig(statres, minmedianshift=args.minmedianshift,pvalue=args.pvalue,
                    outfile=args.outdir+"/"+args.group1+"vs"+args.group2+"_"+args.stattest+"_significantresults.txt")
 
     plotsig_violin(sigks, statres, disco1, disco2,
