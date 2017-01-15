@@ -78,6 +78,7 @@ def main():
     group2out = args.outdir+"/"+args.group2+"_alldatadf.txt" if args.group2file is None else args.group2file
     disco1 = Disco(args.sampleannfile, args.group1, group1out, args.pkldir)
     disco2 = Disco(args.sampleannfile, args.group2, group2out, args.pkldir)
+
     statres = stat_test(disco1, disco2,
                         args.outdir+"/"+args.group1+"vs"+args.group2+"_"+args.stattest+"_allresults.txt",
                         args.maxciw, args.mininfreads, args.mindefreads, args.minavgpsi,
