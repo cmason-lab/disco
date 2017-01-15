@@ -67,15 +67,19 @@ def stat_test(disco1, disco2, outfile, maxciw=1, mininfreads=0, mindefreads=0, m
     if geneannfile is not None:
         # todo clean up hardcoding
         annotationdf = pd.DataFrame.from_csv(geneannfile, sep="\t", index_col=9)
-        statsres_ann = statsres.apply(_getannotation, axis=1, args=(annotationdf, "dummy"))
-        statsres = statsres_ann
+    else:
+        annotationdf = None
+    statsres_ann = statsres.apply(_getannotation, axis=1, args=(annotationdf, "dummy"))
+    statsres = statsres_ann
     if transcriptannfile is not None:
         # todo clean up hardcoding
         enstannotationdf = pd.DataFrame.from_csv(transcriptannfile, sep="\t", index_col=None)
         enstdf2 = enstannotationdf.drop_duplicates(['Ensembl Transcript ID'])
         enstdf2.index = enstdf2['Ensembl Transcript ID']
-        statsres_ann = statsres.apply(_getenstannotation, axis=1, args=(enstdf2, "dummy"))
-        statsres = statsres_ann
+    else:
+        enstdf2 = None
+    statsres_ann = statsres.apply(_getenstannotation, axis=1, args=(enstdf2, "dummy"))
+    statsres = statsres_ann
     # todo add isf shortname to this DF
     # statsres_ann["isfshortname"] = samp1datadf.loc[statsres_ann.index]["isfshortname"]
 
@@ -87,7 +91,7 @@ def stat_test(disco1, disco2, outfile, maxciw=1, mininfreads=0, mindefreads=0, m
 
 def _getannotation(x, annotationdf, dummy):
     ensid = x.name.split("!")[0]
-    if ensid in annotationdf.index:
+    if annotationdf is not None and ensid in annotationdf.index:
         annrow = annotationdf.loc[ensid]
         y = pd.Series([ensid, annrow["Approved Symbol"], annrow["Approved Name"], annrow["Chromosome"]],
                       index=["Ensemble_ID", "Gene_Symbol", "Gene_Name", "Locus"],
@@ -102,7 +106,7 @@ def _getannotation(x, annotationdf, dummy):
 def _getenstannotation(x, enstdf, dummy):
     # example: ENSG00000162244!ENST00000479017.exon3_ENST00000479017.exon2_ENS
     ensid = x.name.split("!")[1].split(".")[0]
-    if ensid in enstdf.index:
+    if enstdf is not None and ensid in enstdf.index:
         annrow = enstdf.loc[ensid]
         y = pd.Series([ensid, annrow["Transcript type"], annrow["Transcript length (including UTRs and CDS)"]],
                       index=["Transcript_ID", "Isoform_Function", "Isoform_Length"],
