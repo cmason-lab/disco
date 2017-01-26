@@ -12,7 +12,7 @@ setup(
       url='https://pbtech-vc.med.cornell.edu/git/mason-lab/disco.git',
       packages=['disco'],
       entry_points={'console_scripts': ['disco = disco.run:main']},
-      requires=['numpy', 'pandas', 'scipy', 'matplotlib', 'seaborn']
+      requires=['numpy', 'pandas', 'scipy', 'matplotlib', 'seaborn', 'statsmodels']
      )
 #      scripts=['scripts/Disco'],
 #      package_dir={'': 'lib'},

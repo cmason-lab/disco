@@ -1,11 +1,13 @@
 import numpy as np
 import pandas as pd
 from scipy import stats
+import statsmodels.stats.multitest as smm
 
 
 # Functions for filtering and comparison
 def stat_test(disco1, disco2, outfile, maxciw=1, mininfreads=0, mindefreads=0, minavgpsi=0, minnumcells=0,
-              minavgshift=0, geneannfile=None, transcriptannfile=None, testtype="KS"):
+              minavgshift=0, multitestmethod="fdr_bh", alpha=0.05, geneannfile=None, transcriptannfile=None,
+              testtype="KS"):
     """
     testtype: {KS, T}
     possible filters:
@@ -73,6 +75,18 @@ def stat_test(disco1, disco2, outfile, maxciw=1, mininfreads=0, mindefreads=0, m
     statsres2 = statsres.apply(lambda x: x.append(pd.Series([meanshifts.loc[x.name]],
                                                             index=["mean_shift"], name=x.name)), axis=1)
     statsres = statsres2
+    if multitestmethod == "none":
+        adjp = pd.Series(statsres['pvalue'], index=statsres.index, name="adjusted_pvalue")
+        sig = pd.Series(adjp < alpha, index=statsres.index, name="significant")
+    else:
+        multitestres = smm.multipletests(statsres['pvalue'], method=multitestmethod, alpha=alpha)
+        adjp = pd.Series(multitestres[1], index=statsres.index, name="adjusted_pvalue")
+        sig = pd.Series(multitestres[0], index=statsres.index, name="significant")
+    statsres2 = pd.concat([statsres, adjp], axis=1)
+    statsres = statsres2
+    statsres2 = pd.concat([statsres, sig], axis=1)
+    statsres = statsres2
+    print "Significant at mulitple testing corrected pvalue", alpha, ":", len(statsres[statsres["significant"]])
     if geneannfile is not None:
         # todo clean up hardcoding
         annotationdf = pd.DataFrame.from_csv(geneannfile, sep="\t", index_col=9)
@@ -150,17 +164,23 @@ def filterminavgpsi(joineddf, minavgpsi=0):
     return keystokeep
 
 
-def getsig(statsres, pvalue=0.05, bonferroni=True, outfile=None): #minmedianshift=0,
-    thresh = pvalue/statsres.shape[0] if bonferroni else pvalue
-    # significant
-    sigres = statsres[statsres["pvalue"] < thresh]
-    print "Significant at pvalue", pvalue, "and bonferroni", bonferroni, ":", sigres.shape
-    toreturn = sigres
-    # if sigres.shape[0] > 0:
-    #     sigres2 = sigres[sigres["median_shift"].abs() > minmedianshift]
-    #     print "Number of sites with median shift >", minmedianshift, ":", sigres2.shape
-    #     toreturn = sigres2
+def getsig(statsres, outfile=None):
+    sigres = statsres[statsres["significant"]]
     if outfile is not None:
-        toreturn.to_csv(outfile, sep="\t", index_label="gene!isoform")
-    return toreturn
+        sigres.to_csv(outfile, sep="\t", index_label="gene!isoform")
+    return sigres
+
+# def getsig(statsres, pvalue=0.05, bonferroni=True, outfile=None): #minmedianshift=0,
+#     thresh = pvalue/statsres.shape[0] if bonferroni else pvalue
+#     # significant
+#     sigres = statsres[statsres["pvalue"] < thresh]
+#     print "Significant at pvalue", pvalue, "and bonferroni", bonferroni, ":", sigres.shape
+#     toreturn = sigres
+#     # if sigres.shape[0] > 0:
+#     #     sigres2 = sigres[sigres["median_shift"].abs() > minmedianshift]
+#     #     print "Number of sites with median shift >", minmedianshift, ":", sigres2.shape
+#     #     toreturn = sigres2
+#     if outfile is not None:
+#         toreturn.to_csv(outfile, sep="\t", index_label="gene!isoform")
+#     return toreturn
 

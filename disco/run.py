@@ -65,9 +65,14 @@ def main():
     parser.add_argument('--stattest', metavar="", dest='stattest', choices=["KS", "T"], type=str,
                         default="KS",
                         help="Which test to run? options: {KS, T}")  # options kstest or ttest
-    parser.add_argument('--pvalue', metavar="", dest='pvalue', type=float,
+    parser.add_argument('--alpha', metavar="", dest='alpha', type=float,
                         default=0.05,
-                        help="P-value threshold for statistical significance")
+                        help="Adjustded p-value threshold for statistical significance")
+    parser.add_argument('--multitestmethod',metavar="", dest='multitestmethod',
+                        choices=['bonferroni', 'sidak', 'holm-sidak', 'holm', 'simes-hochberg', 'hommel',
+                                 'fdr_bh', 'fdr_by', 'fdr_tsbh', 'fdr_tsbky', 'none'], type=str, default='fdr_bh',
+                        help="Method for multiple testing correction. Accepts any input compatible with "
+                             "statsmodels.stats.multitest.multipletests or 'none'")
 
     args = parser.parse_args()
 
@@ -79,11 +84,20 @@ def main():
     disco1 = Disco(args.sampleannfile, args.group1, group1out, args.pkldir)
     disco2 = Disco(args.sampleannfile, args.group2, group2out, args.pkldir)
 
-    statres = stat_test(disco1, disco2,
+    statres = stat_test(disco1,
+                        disco2,
                         args.outdir+"/"+args.group1+"vs"+args.group2+"_"+args.stattest+"_allresults.txt",
-                        args.maxciw, args.mininfreads, args.mindefreads, args.minavgpsi,
-                        args.minnumcells, args.minavgshift,
-                        args.geneannotationfile, args.transcriptannotationfile, args.stattest)
+                        maxciw=args.maxciw,
+                        mininfreads=args.mininfreads,
+                        mindefreads=args.mindefreads,
+                        minavgpsi=args.minavgpsi,
+                        minnumcells=args.minnumcells,
+                        minavgshift=args.minavgshift,
+                        multitestmethod=args.multitestmethod,
+                        alpha=args.alpha,
+                        geneannfile=args.geneannotationfile,
+                        transcriptannfile=args.transcriptannotationfile,
+                        testtype=args.stattest)
 
     sigks = getsig(statres, pvalue=args.pvalue,
                    outfile=args.outdir+"/"+args.group1+"vs"+args.group2+"_"+args.stattest+"_significantresults.txt")
