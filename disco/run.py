@@ -58,10 +58,10 @@ def main():
     parser.add_argument('--minnumcells', metavar="", dest='minnumcells', type=int,
                         default=0,
                         help="Do not run statistical test for isoform if less than minnumcells have information")
-    parser.add_argument('--minmedianshift', metavar="", dest='minmedianshift', type=float,
+    parser.add_argument('--minavgshift', metavar="", dest='minavgshift', type=float,
                         default=0,
-                        help="Do not run statistical test for isoform if shift in median between the two groups is "
-                             "less than minmedianshift")
+                        help="Do not run statistical test for isoform if shift in mean PSI between the two groups is "
+                             "less than minavgshift")
     parser.add_argument('--stattest', metavar="", dest='stattest', choices=["KS", "T"], type=str,
                         default="KS",
                         help="Which test to run? options: {KS, T}")  # options kstest or ttest
@@ -82,9 +82,10 @@ def main():
     statres = stat_test(disco1, disco2,
                         args.outdir+"/"+args.group1+"vs"+args.group2+"_"+args.stattest+"_allresults.txt",
                         args.maxciw, args.mininfreads, args.mindefreads, args.minavgpsi,
-                        args.minnumcells, args.geneannotationfile, args.transcriptannotationfile, args.stattest)
+                        args.minnumcells, args.minavgshift,
+                        args.geneannotationfile, args.transcriptannotationfile, args.stattest)
 
-    sigks = getsig(statres, minmedianshift=args.minmedianshift,pvalue=args.pvalue,
+    sigks = getsig(statres, pvalue=args.pvalue,
                    outfile=args.outdir+"/"+args.group1+"vs"+args.group2+"_"+args.stattest+"_significantresults.txt")
 
     plotsig_violin(sigks, statres, disco1, disco2,

@@ -5,7 +5,7 @@ from scipy import stats
 
 # Functions for filtering and comparison
 def stat_test(disco1, disco2, outfile, maxciw=1, mininfreads=0, mindefreads=0, minavgpsi=0, minnumcells=0,
-              geneannfile=None, transcriptannfile=None, testtype="KS"):
+              minavgshift=0, geneannfile=None, transcriptannfile=None, testtype="KS"):
     """
     testtype: {KS, T}
     possible filters:
@@ -20,13 +20,13 @@ def stat_test(disco1, disco2, outfile, maxciw=1, mininfreads=0, mindefreads=0, m
     print "Sample 1:", samp1datadf.shape
     samp1psis = filterdf(samp1datadf, maxciw, mininfreads, mindefreads, minnumcells)
     print "Filtered Sample 1:", samp1psis.shape
-    samp1psis.to_csv(disco1.outfile.strip(".txt")+"_filtpsimat.txt", sep="\t")
+    samp1psis.to_csv(disco1.outfile.rstrip(".txt")+"_filtpsimat.txt", sep="\t")
     print
     samp2datadf = disco2.alldatadf
     print "Sample 2:", samp2datadf.shape
     samp2psis = filterdf(samp2datadf, maxciw, mininfreads, mindefreads, minnumcells)
     print "Filtered Sample 2:", samp2psis.shape
-    samp2psis.to_csv(disco2.outfile.strip(".txt")+"_filtpsimat.txt", sep="\t")
+    samp2psis.to_csv(disco2.outfile.rstrip(".txt")+"_filtpsimat.txt", sep="\t")
     print
     # intersectkeys = set(samp1psis.index) & set(samp2psis.index)
     # print "Number of shared isoforms:", len(intersectkeys)
@@ -44,7 +44,16 @@ def stat_test(disco1, disco2, outfile, maxciw=1, mininfreads=0, mindefreads=0, m
 
     samp1kept2 = samp1kept.loc[newkeys, ]
     samp2kept2 = samp2kept.loc[newkeys, ]
+    meanshifts = samp2kept2.mean(axis=1) - samp1kept2.mean(axis=1)
+    newkeys2 = meanshifts[meanshifts.abs() > minavgshift].index
+    print "After filtering for min avg. shift in psi:", len(newkeys2)
+    # medianshifts = samp1kept2.median(axis=1) - samp2kept2.median(axis=1)
+    # newkeys2 = medianshifts[medianshifts > minmedianshift].index
+    # print "After filtering for min median shift in psi:", len(newkeys2)
 
+    samp1kept2 = samp1kept2.loc[newkeys2, ]
+    samp2kept2 = samp2kept2.loc[newkeys2, ]
+    meanshifts = meanshifts.loc[newkeys2]
     # todo test only 1 isoform when 2 exist (might already be doing this..)
     if testtype == "KS":
         print "Running KS test"
@@ -60,9 +69,9 @@ def stat_test(disco1, disco2, outfile, maxciw=1, mininfreads=0, mindefreads=0, m
                                                                         samp2kept2.loc[x.name][maskmat2.loc[x.name]]),
                                                         index=["T", "pvalue"], name=x.name), axis=1)
     #  append median shift to statsres DF
-    medianshifts = samp1kept2.median(axis=1) - samp2kept2.median(axis=1)
-    statsres2 = statsres.apply(lambda x: x.append(pd.Series([medianshifts.loc[x.name]],
-                                                            index=["median_shift"], name=x.name)), axis=1)
+    # medianshifts = samp1kept2.median(axis=1) - samp2kept2.median(axis=1)
+    statsres2 = statsres.apply(lambda x: x.append(pd.Series([meanshifts.loc[x.name]],
+                                                            index=["mean_shift"], name=x.name)), axis=1)
     statsres = statsres2
     if geneannfile is not None:
         # todo clean up hardcoding
@@ -141,16 +150,16 @@ def filterminavgpsi(joineddf, minavgpsi=0):
     return keystokeep
 
 
-def getsig(statsres, pvalue=0.05, bonferroni=True, minmedianshift=0, outfile=None):
+def getsig(statsres, pvalue=0.05, bonferroni=True, outfile=None): #minmedianshift=0,
     thresh = pvalue/statsres.shape[0] if bonferroni else pvalue
     # significant
     sigres = statsres[statsres["pvalue"] < thresh]
     print "Significant at pvalue", pvalue, "and bonferroni", bonferroni, ":", sigres.shape
     toreturn = sigres
-    if sigres.shape[0] > 0:
-        sigres2 = sigres[sigres["median_shift"].abs() > minmedianshift]
-        print "Number of sites with median shift >", minmedianshift, ":", sigres2.shape
-        toreturn = sigres2
+    # if sigres.shape[0] > 0:
+    #     sigres2 = sigres[sigres["median_shift"].abs() > minmedianshift]
+    #     print "Number of sites with median shift >", minmedianshift, ":", sigres2.shape
+    #     toreturn = sigres2
     if outfile is not None:
         toreturn.to_csv(outfile, sep="\t", index_label="gene!isoform")
     return toreturn
