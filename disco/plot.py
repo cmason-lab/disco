@@ -9,7 +9,7 @@ sns.set_context("talk", font_scale=1.5)
 
 def plotsig_violin(sigks, statsres, disco1, disco2, outfile, sampname1, sampname2, color1="r", color2="b"):
     # enstdf = pd.DataFrame.from_csv(enstfile, sep="\t", index_col=1)
-    sns.set(style="dark", palette="muted", color_codes=True, font_scale=1.5)
+    sns.set(style="white", palette="muted", color_codes=True, font_scale=1.5)
     plotspdf = pdf.PdfPages(outfile)
     alldatadf1 = disco1.alldatadf
     alldatadf2 = disco2.alldatadf
@@ -19,7 +19,7 @@ def plotsig_violin(sigks, statsres, disco1, disco2, outfile, sampname1, sampname
     print "Plotting ", len(genestoplot), " genes"
     if len(genestoplot) > 100:
         genestoplot = genestoplot[0:100]
-        print "plotting top 100 genes (by median shift) of ", len(genestoplot), "total significant genes"
+        print "plotting top 100 genes (by significance) of ", len(genestoplot), "total significant genes"
     for gene in genestoplot:
         # print gene
         genedf1 = alldatadf1[alldatadf1["event_name"] == gene]
@@ -37,7 +37,7 @@ def plotsig_violin(sigks, statsres, disco1, disco2, outfile, sampname1, sampname
             plt.title(str(annrow["Gene_Symbol"])+"\n"+str(annrow["Gene_Name"])+"; "+str(annrow["Locus"]))
             print annrow["Gene_Symbol"]
         plt.ylim(0, 1)
-        plt.ylabel("Distribution of Isoform Expression")
+        plt.ylabel("Fraction Expressed")
         plt.xlabel("Isoform ( - tested, * significant )")
         plt.legend(loc='upper left', bbox_to_anchor=(1.0, 0.9))
         plt.subplots_adjust(top=0.88, right=0.8, bottom=0.2)
