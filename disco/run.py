@@ -99,7 +99,7 @@ def main():
                         transcriptannfile=args.transcriptannotationfile,
                         testtype=args.stattest)
 
-    sigks = getsig(statres, pvalue=args.pvalue,
+    sigks = getsig(statres,
                    outfile=args.outdir+"/"+args.group1+"vs"+args.group2+"_"+args.stattest+"_significantresults.txt")
 
     plotsig_violin(sigks, statres, disco1, disco2,
