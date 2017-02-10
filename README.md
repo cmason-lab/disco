@@ -15,10 +15,10 @@ disco path/to/samplefilelist.txt group1 group2
 **To see other options, including filtering (default is no filtering):**
 
 
-disco -hz
+disco -h
 
 
-usage: disco [-h] [-v] [--outdir] [--pkldir] [--group1color] [--group2color]
+	usage: disco [-h] [-v] [--outdir] [--pkldir] [--group1color] [--group2color]
 
              [--group1file] [--group2file] [--geneannotationfile]
 
