@@ -110,14 +110,17 @@ class Disco:
         psis = map(float, str(x["miso_posterior_mean"]).split(","))
         cilows = map(float, str(x["ci_low"]).split(","))
         cihighs = map(float, str(x["ci_high"]).split(","))
-        starts = map(int, x["mRNA_starts"].split(","))
-        ends = map(int, x["mRNA_ends"].split(","))
+        starts = map(int, str(x["mRNA_starts"]).split(","))
+        ends = map(int, str(x["mRNA_ends"]).split(","))
         # todo add isf chromosome start stops to long format
         if len(psis) == 1:
             psis.append(1 - psis[0])
             # extrapolate confidence interval to psi of next isoform by maintaining width and position within range
             cilows.append(psis[1]-(psis[0]-cilows[0]))
             cihighs.append(psis[1]+(cihighs[0]-psis[0]))
+            # # dummies for mRNA start and end positions
+            # starts.append(0)
+            # ends.append(0)
 
         # calculate num reads informative and definitive
         ciwidths = list(np.array(cihighs) - np.array(cilows))
@@ -149,6 +152,13 @@ class Disco:
                                         index=["gene!isoform", "isfshortname", "psi_i", "cilow_i", "cihigh_i",
                                                "ciwidth_i", "numreadsinf", "numreadsdef", "assignedcounts_i",
                                                "isflength_i"])))
+
+            # y.append(x.append(pd.Series([rownames[i], isfshortnames[i], psis[i], cilows[i], cihighs[i], ciwidths[i],
+            #                              numreadsinf, numreadsdef, counts.get(i, 0), isflengths[i],
+            #                              x["chrom"], starts[i], ends[i]],
+            #                             index=["gene!isoform", "isfshortname", "psi_i", "cilow_i", "cihigh_i",
+            #                                    "ciwidth_i", "numreadsinf", "numreadsdef", "assignedcounts_i",
+            #                                    "isflength_i", "chrom", "mRNAstart_i", "mRNAend_i"])))
 
         # y = []
         # for i in range(len(rownames)):

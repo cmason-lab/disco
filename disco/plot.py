@@ -16,10 +16,11 @@ def plotsig_violin(sigks, statsres, disco1, disco2, outfile, sampname1, sampname
     alldatadf1["group"] = pd.Series(np.repeat(sampname1, alldatadf1.shape[0]), index=alldatadf1.index)
     alldatadf2["group"] = pd.Series(np.repeat(sampname2, alldatadf2.shape[0]), index=alldatadf2.index)
     genestoplot = sigks.sort_values(by='pvalue')["Ensemble_ID"].unique()
-    print "Plotting ", len(genestoplot), " genes"
     if len(genestoplot) > 100:
-        genestoplot = genestoplot[0:100]
         print "plotting top 100 genes (by significance) of ", len(genestoplot), "total significant genes"
+        genestoplot = genestoplot[0:100]
+    else:
+        print "Plotting ", len(genestoplot), " genes"
     for gene in genestoplot:
         # print gene
         genedf1 = alldatadf1[alldatadf1["event_name"] == gene]
