@@ -2,101 +2,103 @@
 Distributions of Isoforms in Single Cell Omics
 
 ## Installation
-	python setup.py install
+`python setup.py install`
 
 ## Usage
 
 
 **To run with default settings:**
 
-	disco path/to/samplefilelist.txt group1 group2
+`disco path/to/samplefilelist.txt group1 group2`
 
 
 **To see other options, including filtering (default is no filtering):**
 
 
-	disco -h
+```
+disco -h
 
-	usage: disco [-h] [-v] [--outdir] [--pkldir] [--group1color] [--group2color]
-             [--group1file] [--group2file] [--geneannotationfile]
-             [--transcriptannotationfile] [--maxciwidth] [--mininfreads]
-             [--mindefreads] [--minavgpsi] [--minnumcells] [--minavgshift]
-             [--stattest] [--alpha] [--multitestmethod]
-             SampleAnnotationFile Group1 Group2
-
-
-	DISCO: Distributions of Isoforms in Single Cell Omics
+usage: disco [-h] [-v] [--outdir] [--pkldir] [--group1color] [--group2color]
+         [--group1file] [--group2file] [--geneannotationfile]
+         [--transcriptannotationfile] [--maxciwidth] [--mininfreads]
+         [--mindefreads] [--minavgpsi] [--minnumcells] [--minavgshift]
+         [--stattest] [--alpha] [--multitestmethod]
+         SampleAnnotationFile Group1 Group2
 
 
-	positional arguments:
+DISCO: Distributions of Isoforms in Single Cell Omics
 
 
-    SampleAnnotationFile  filename of tab separated text, no header, with
-                        columns: <path to miso summary file> <sample name>
-                        <group name>
-    Group1                must match a group name in sample annotation file
-
-    Group2                must match a group name in sample annotation file
+positional arguments:
 
 
-    optional arguments:
+SampleAnnotationFile  filename of tab separated text, no header, with
+                    columns: <path to miso summary file> <sample name>
+                    <group name>
+Group1                must match a group name in sample annotation file
 
-      -h, --help            show this help message and exit
+Group2                must match a group name in sample annotation file
 
-      -v, --version         show program's version number and exit
 
-      --outdir              Output directory (default: ./disco_output/)
+optional arguments:
 
-      --pkldir              Directory to store intermediate data processing files
-                            (default: ./pkldir)
+  -h, --help            show this help message and exit
 
-      --group1color         Color in plots for group 1; can be {y, m, c, r, g, b,
-                            w, k} or html code (default: r)
+  -v, --version         show program's version number and exit
 
-      --group2color         Color in plots for group 2; can be {y, m, c, r, g, b,
-                            w, k} or html code (default: b)
+  --outdir              Output directory (default: ./disco_output/)
 
-      --group1file          output file for sample group 1. If not specified, will
-                            save to <outdir>/<group1name>_alldatadf.txt (default:
-                            None)
+  --pkldir              Directory to store intermediate data processing files
+                        (default: ./pkldir)
 
-      --group2file          output file for sample group 2. If not specified, will
-                            save to <outdir>/<group2name>_alldatadf.txt (default:
-                            None)
+  --group1color         Color in plots for group 1; can be {y, m, c, r, g, b,
+                        w, k} or html code (default: r)
 
-      --geneannotationfile 
-                            Mapping of Ensembl gene IDs to HGNC symbol and gene
-                            descriptions (default: None)
+  --group2color         Color in plots for group 2; can be {y, m, c, r, g, b,
+                        w, k} or html code (default: b)
 
-      --transcriptannotationfile 
-                            Mapping of Ensembl transcript IDs to isoform function
-                            (ex. protein coding, NMD, etc) (default: None)
+  --group1file          output file for sample group 1. If not specified, will
+                        save to <outdir>/<group1name>_alldatadf.txt (default:
+                        None)
 
-      --maxciwidth          Maximum width of confidence interval of PSI estimate
-                            (default: 1.0)
+  --group2file          output file for sample group 2. If not specified, will
+                        save to <outdir>/<group2name>_alldatadf.txt (default:
+                        None)
 
-      --mininfreads         Minimum number of informative reads to include PSI
-                            estimate (default: 0)
+  --geneannotationfile 
+                        Mapping of Ensembl gene IDs to HGNC symbol and gene
+                        descriptions (default: None)
 
-      --mindefreads         Minimum number of definitive reads to include PSI
-                            estimate (default: 0)
-                            
-      --minavgpsi           Do not run statistical tests for isoforms with average
-                            PSI in both groups less than minavgpsi (default: 0.0)
+  --transcriptannotationfile 
+                        Mapping of Ensembl transcript IDs to isoform function
+                        (ex. protein coding, NMD, etc) (default: None)
 
-      --minnumcells         Do not run statistical test for isoform if less than
-                            minnumcells have information (default: 0)
+  --maxciwidth          Maximum width of confidence interval of PSI estimate
+                        (default: 1.0)
 
-      --minavgshift         Do not run statistical test for isoform if shift in
-                            mean PSI between the two groups is less than
-                            minavgshift (default: 0)
+  --mininfreads         Minimum number of informative reads to include PSI
+                        estimate (default: 0)
 
-      --stattest            Which test to run? options: {KS, T} (default: KS)
+  --mindefreads         Minimum number of definitive reads to include PSI
+                        estimate (default: 0)
+                        
+  --minavgpsi           Do not run statistical tests for isoforms with average
+                        PSI in both groups less than minavgpsi (default: 0.0)
 
-      --alpha               Adjustded p-value threshold for statistical
-                            significance (default: 0.05)
+  --minnumcells         Do not run statistical test for isoform if less than
+                        minnumcells have information (default: 0)
 
-      --multitestmethod     Method for multiple testing correction. Accepts any
-                            input compatible with
-                            statsmodels.stats.multitest.multipletests or 'none'
-                            (default: fdr_bh)
+  --minavgshift         Do not run statistical test for isoform if shift in
+                        mean PSI between the two groups is less than
+                        minavgshift (default: 0)
+
+  --stattest            Which test to run? options: {KS, T} (default: KS)
+
+  --alpha               Adjustded p-value threshold for statistical
+                        significance (default: 0.05)
+
+  --multitestmethod     Method for multiple testing correction. Accepts any
+                        input compatible with
+                        statsmodels.stats.multitest.multipletests or 'none'
+                        (default: fdr_bh)
+```
