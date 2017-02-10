@@ -15,7 +15,7 @@ Distributions of Isoforms in Single Cell Omics
 **To see other options, including filtering (default is no filtering):**
 
 
-`
+```
 disco -h
 
 usage: disco [-h] [-v] [--outdir] [--pkldir] [--group1color] [--group2color]
@@ -101,4 +101,4 @@ optional arguments:
                         input compatible with
                         statsmodels.stats.multitest.multipletests or 'none'
                         (default: fdr_bh)
-`
+```
