@@ -26,8 +26,8 @@ usage: disco [-h] [-v] [--outdir] [--pkldir] [--group1color] [--group2color]
 **positional arguments:**
 
   SampleAnnotationFile  filename of tab separated text, no header, with
-                        columns: <path to miso summary file> <sample name>
-                        <group name>
+                        columns: path to miso summary file, sample name, 
+                        group name
 
   Group1                must match a group name in sample annotation file
 
