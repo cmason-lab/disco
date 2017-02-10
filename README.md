@@ -32,73 +32,76 @@ DISCO: Distributions of Isoforms in Single Cell Omics
 positional arguments:
 
 
-SampleAnnotationFile  filename of tab separated text, no header, with
-                    columns: <path to miso summary file> <sample name>
-                    <group name>
-Group1                must match a group name in sample annotation file
+    SampleAnnotationFile  
+                      filename of tab separated text, no header, with
+                      columns: <path to miso summary file> <sample name>
+                      <group name>
+    Group1                
+                      must match a group name in sample annotation file
 
-Group2                must match a group name in sample annotation file
+    Group2                
+                      must match a group name in sample annotation file
 
 
 optional arguments:
 
-  -h, --help            show this help message and exit
+    -h, --help            show this help message and exit
 
-  -v, --version         show program's version number and exit
+    -v, --version         show program's version number and exit
 
-  --outdir              Output directory (default: ./disco_output/)
+    --outdir              Output directory (default: ./disco_output/)
 
-  --pkldir              Directory to store intermediate data processing files
-                        (default: ./pkldir)
+    --pkldir              Directory to store intermediate data processing files
+                          (default: ./pkldir)
 
-  --group1color         Color in plots for group 1; can be {y, m, c, r, g, b,
-                        w, k} or html code (default: r)
+    --group1color         Color in plots for group 1; can be {y, m, c, r, g, b,
+                          w, k} or html code (default: r)
 
-  --group2color         Color in plots for group 2; can be {y, m, c, r, g, b,
-                        w, k} or html code (default: b)
+    --group2color         Color in plots for group 2; can be {y, m, c, r, g, b,
+                          w, k} or html code (default: b)
 
-  --group1file          output file for sample group 1. If not specified, will
-                        save to <outdir>/<group1name>_alldatadf.txt (default:
-                        None)
+    --group1file          output file for sample group 1. If not specified, will
+                          save to <outdir>/<group1name>_alldatadf.txt (default:
+                          None)
 
-  --group2file          output file for sample group 2. If not specified, will
-                        save to <outdir>/<group2name>_alldatadf.txt (default:
-                        None)
+    --group2file          output file for sample group 2. If not specified, will
+                          save to <outdir>/<group2name>_alldatadf.txt (default:
+                          None)
 
-  --geneannotationfile 
-                        Mapping of Ensembl gene IDs to HGNC symbol and gene
-                        descriptions (default: None)
+    --geneannotationfile  
+                          Mapping of Ensembl gene IDs to HGNC symbol and gene
+                          descriptions (default: None)
 
-  --transcriptannotationfile 
-                        Mapping of Ensembl transcript IDs to isoform function
-                        (ex. protein coding, NMD, etc) (default: None)
+    --transcriptannotationfile 
+                          Mapping of Ensembl transcript IDs to isoform function
+                          (ex. protein coding, NMD, etc) (default: None)
 
-  --maxciwidth          Maximum width of confidence interval of PSI estimate
-                        (default: 1.0)
+    --maxciwidth          Maximum width of confidence interval of PSI estimate
+                          (default: 1.0)
 
-  --mininfreads         Minimum number of informative reads to include PSI
-                        estimate (default: 0)
+    --mininfreads         Minimum number of informative reads to include PSI
+                          estimate (default: 0)
 
-  --mindefreads         Minimum number of definitive reads to include PSI
-                        estimate (default: 0)
-                        
-  --minavgpsi           Do not run statistical tests for isoforms with average
-                        PSI in both groups less than minavgpsi (default: 0.0)
+    --mindefreads         Minimum number of definitive reads to include PSI
+                          estimate (default: 0)
+                    
+    --minavgpsi           Do not run statistical tests for isoforms with average
+                          PSI in both groups less than minavgpsi (default: 0.0)
 
-  --minnumcells         Do not run statistical test for isoform if less than
-                        minnumcells have information (default: 0)
+    --minnumcells         Do not run statistical test for isoform if less than
+                          minnumcells have information (default: 0)
 
-  --minavgshift         Do not run statistical test for isoform if shift in
-                        mean PSI between the two groups is less than
-                        minavgshift (default: 0)
+    --minavgshift         Do not run statistical test for isoform if shift in
+                          mean PSI between the two groups is less than
+                          minavgshift (default: 0)
 
-  --stattest            Which test to run? options: {KS, T} (default: KS)
+    --stattest            Which test to run? options: {KS, T} (default: KS)
 
-  --alpha               Adjustded p-value threshold for statistical
-                        significance (default: 0.05)
+    --alpha               Adjustded p-value threshold for statistical
+                          significance (default: 0.05)
 
-  --multitestmethod     Method for multiple testing correction. Accepts any
-                        input compatible with
-                        statsmodels.stats.multitest.multipletests or 'none'
-                        (default: fdr_bh)
+    --multitestmethod     Method for multiple testing correction. Accepts any
+                          input compatible with
+                          statsmodels.stats.multitest.multipletests or 'none'
+                          (default: fdr_bh)
 ```
