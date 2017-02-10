@@ -64,15 +64,17 @@ def main():
                              "less than minavgshift")
     parser.add_argument('--stattest', metavar="", dest='stattest', choices=["KS", "T"], type=str,
                         default="KS",
-                        help="Which test to run? options: {KS, T}")  # options kstest or ttest
+                        help="Which test to run? Options: {'KS', 'T'}")  # options kstest or ttest
     parser.add_argument('--alpha', metavar="", dest='alpha', type=float,
                         default=0.05,
                         help="Adjustded p-value threshold for statistical significance")
-    parser.add_argument('--multitestmethod',metavar="", dest='multitestmethod',
+    parser.add_argument('--multitestmethod', metavar="", dest='multitestmethod',
                         choices=['bonferroni', 'sidak', 'holm-sidak', 'holm', 'simes-hochberg', 'hommel',
                                  'fdr_bh', 'fdr_by', 'fdr_tsbh', 'fdr_tsbky', 'none'], type=str, default='fdr_bh',
-                        help="Method for multiple testing correction. Accepts any input compatible with "
-                             "statsmodels.stats.multitest.multipletests or 'none'")
+                        help="Method for multiple testing correction. Options: "
+                             "{'bonferroni', 'sidak', 'holm-sidak', 'holm', 'simes-hochberg', 'hommel', "
+                             "'fdr_bh', 'fdr_by', 'fdr_tsbh', 'fdr_tsbky', 'none'}. "
+                             "See statsmodels.stats.multitest.multipletests for more info")
 
     args = parser.parse_args()
 
