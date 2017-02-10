@@ -15,7 +15,7 @@ Distributions of Isoforms in Single Cell Omics
 **To see other options, including filtering (default is no filtering):**
 
 
-```
+```shell
 disco -h
 
 usage: disco [-h] [-v] [--outdir] [--pkldir] [--group1color] [--group2color]
