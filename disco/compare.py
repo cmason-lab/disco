@@ -108,7 +108,7 @@ def stat_test(disco1, disco2, outfile, maxciw=1, mininfreads=0, mindefreads=0, m
 
     statsres.to_csv(outfile, sep="\t")
     print
-    print "Final result:", statsres.shape
+    # print "Final result:", statsres.shape
     return statsres
 
 
