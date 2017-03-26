@@ -81,6 +81,9 @@ def main():
     if not os.path.exists(args.outdir):
         os.makedirs(args.outdir)
 
+    if not os.path.exists(args.pkldir):
+        os.makedirs(args.pkldir)
+
     group1out = args.outdir+"/"+args.group1+"_alldatadf.txt" if args.group1file is None else args.group1file
     group2out = args.outdir+"/"+args.group2+"_alldatadf.txt" if args.group2file is None else args.group2file
     disco1 = Disco(args.sampleannfile, args.group1, group1out, args.pkldir)
