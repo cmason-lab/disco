@@ -1,0 +1,2 @@
+event_name	miso_posterior_mean	ci_low	ci_high	isoforms	counts	assigned_counts	chrom	strand	mRNA_starts	mRNA_ends
+ENSG00000146278	0.57,0.03,0.40	0.29,0.00,0.18	0.80,0.10,0.67	'ENST00000369472.exon0_ENST00000369472.exon1','ENST00000336032.exon0_ENST00000336032.exon1','ENST00000354922.exon0_ENST00000354922.exon1'	(0,0,0):32,(0,0,1):8,(1,0,0):2,(1,1,0):2,(1,1,1):8	0:9,1:1,2:10	chr6	+	89790470,89790497,89791555	89794064,89794879,89793916

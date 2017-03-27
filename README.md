@@ -114,3 +114,10 @@ optional arguments:
                           `none` : no multiple testing correction
                           (default: fdr_bh)
 ```
+
+## Example
+
+```
+cd example/
+./run.sh >> run.log 2>&1
+```
