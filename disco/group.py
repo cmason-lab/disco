@@ -34,8 +34,6 @@ class Disco:
     def _process(self):
         # filenames = list(self.sampleann.index)
         # cellnames = list(self.sampleann[1])
-        # print filenames
-        # filenames.remove("../miso/summaryfiles/MDS4-B12_miso-output.miso_summary")  # temp workaround for unknown bug
 
         # self.cellnames = cellnames
         pklfiles = [self.readsummfile(i) for i in range(self.sampleann.shape[0])]
@@ -79,21 +77,20 @@ class Disco:
         # todo fix bug that causes some cells to fail and remove try/catch - bug fixed, remove try/catch
         try:
             df1 = pd.read_table(filename, sep="\t")
-            print df1.shape
-            print df1.columns
+            #print df1.shape
+            #print df1.columns
             df1["cellname"] = pd.Series(np.repeat(cellname, df1.shape[0]), index=df1.index)
-            print df1.columns
+            #print df1.columns
             df2 = df1.apply(self._readhelper1, 1)
-            print df2.shape
+            #print df2.shape
             df3 = list(df2.apply(self._readhelper2, 1))
             df4 = pd.concat(df3)
-            print df4.shape
+            #print df4.shape
             df4.to_pickle(picklefile)
         except:
             print cellname, "failed"
             self.cellsfailed.append(cellname)
             return None
-        print
         return picklefile
 
     @staticmethod
