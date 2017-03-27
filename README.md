@@ -3,14 +3,18 @@ Distributions of Isoforms in Single Cell Omics
 
 ## Installation
 
-`python setup.py install`
+```
+python setup.py install
+```
 
 ## Usage
 
 
 **To run with default settings:**
 
-`disco path/to/samplefilelist.txt group1 group2`
+```
+disco path/to/samplefilelist.txt group1 group2
+```
 
 **To see other options, including filtering (default is no filtering):**
 
